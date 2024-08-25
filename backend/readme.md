@@ -4,7 +4,7 @@ Texty backend is based on NodeTS and express. The former is the well-known JavaS
 
 Before continuing to giving instructions to set up the backend, a mongodb connection needs to be established.
 
-If you want to set a different host for the connection, just go to [Model.ts] (/src/DAO/Database/Model.ts). You will find an object at the line 49 which is used for specifying the connection properties to be used for connecting to mongodb, be it through MongoAtlas or MongoDB locally.
+If you want to set a different host for the connection, just go to [Model.ts](/src/DAO/Database/Model.ts). You will find an object at the line 49 which is used for specifying the connection properties to be used for connecting to mongodb, be it through MongoAtlas or MongoDB locally.
 
 ## Get started
 To install the dependencies needed in the backend just do: ```npm install```
