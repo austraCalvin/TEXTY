@@ -5,7 +5,7 @@ const NotificationSearch = (): JSX.Element => {
 
     const { sort, isFocused, inputOnChange, inputOnFocus, inputOnBlur } = React.useContext(SortContext);
 
-    return (<>
+    return (<div className="input-group search-input has-validation">
 
         <button type="button" className="btn d-flex justify-content-center align-items-center"
             aria-label="Search">
@@ -36,7 +36,7 @@ const NotificationSearch = (): JSX.Element => {
         }
 
 
-    </>);
+    </div>);
 
 };
 

@@ -123,7 +123,8 @@ export const login: VerifyFunctionWithRequest = async (req, username, password, 
 
     if (loginUser === null) {
 
-        return done(`${errorOrigin} - there is not a user with the current username`, false);
+        // return done(`${errorOrigin} - there is not a user with the current username`, false);
+        return done(null, false);
 
     };
 
@@ -131,7 +132,8 @@ export const login: VerifyFunctionWithRequest = async (req, username, password, 
 
     if (loginUser.password !== password) {
 
-        return done(`${errorOrigin} - the password is incorrect`, false);
+        // return done(`${errorOrigin} - the password is incorrect`, false, {"message": "Incorrect password"});
+        return done(null, false);
 
     } else {
 

@@ -96,10 +96,9 @@ const Confirm = (props: IConfirmProps): JSX.Element => {
                     !(currentStatus === "Patched")
                         ?
                         <>
-                            <div className={`${currentStatus === "Unauthorized" ? "is-invalid" : ""}`} aria-describedby="confirm-password-feedback">
+                            <div className={`${currentStatus === "Unauthorized" ? "is-invalid" : ""}`} aria-describedby="recovery-confirm-feedback">
 
-                                <div className="mb-3"
-                                    aria-describedby="recovery-confirm-feedback">
+                                <div className="mb-3">
                                     <label htmlFor="user-password" className="form-label">password</label>
                                     <input type="password" className="form-control" id="user-password" value={password} onChange={onPasswordChange} />
                                 </div>

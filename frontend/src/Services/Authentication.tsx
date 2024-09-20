@@ -11,8 +11,8 @@ export const authenticationAPI = createApi({
         "checkAuth": builder.query<{ "state": ("Unauthorized" | "Authorized") }, void>({
             "query": () => ({ "url": "/isAuthenticated", "method": "GET" })
         }),
-        "LogIn": builder.mutation<{ "state": ("Success" | "Fail") }, ILoginUser>({
-            "query": (data) => ({ "url": "/login", "method": "POST", "body": data, responseHandler: "json", "headers": {"content-type": "application/json"} })
+        "LogIn": builder.mutation<"Correct" | "Incorrect" | "Fail", ILoginUser>({
+            "query": (data) => ({ "url": "/login", "method": "POST", "body": data, responseHandler: "text", "headers": {"content-type": "application/json"} })
         }),
         "LogOut": builder.mutation<{ "state": ("Success" | "Fail") }, void>({
             "query": () => ({ "url": "/logout", "method": "POST", "body": "", responseHandler: "json" })

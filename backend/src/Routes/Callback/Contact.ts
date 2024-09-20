@@ -1,14 +1,32 @@
+import Joi from "joi";
 import UserFactory from "../../DAO/Entity/User/User";
 import UserContactsUserFactory from "../../DAO/Entity/User/UserContactsUser";
 import { CustomHandler } from "../../Types/Handler";
 
-export const addContactHandler: CustomHandler<true, { "username": string }> = async (req, res, next) => {
+export const addContactHandler: CustomHandler<true, {}, string> = async (req, res, next) => {
+
+    const isValid = Joi.string().min(3).validate(req.body);
+
+    if (isValid.error) {
+
+        console.log(`Error from addContactHandlerCallback - joi validation: ${isValid.error.details[0].message}`);
+        console.log("username field:", req.body);
+
+        res.json({ "status": "Bad Request", "message": "The field must be a string and have at least three characters" });
+        return;
+
+    };
+
+    const username = isValid.value;
 
     const currentUser = (req as Express.AuthenticatedRequest).user;
 
-    console.log("user is allowed to do");
+    if (currentUser.username === username) {
 
-    const { username } = req.params;
+        res.json({ "status": "Bad Request", "message": "You can't add yourself as a contact" });
+        return;
+
+    };
 
     const contactUser = await UserFactory.findByUsername(username).catch((err) => {
 
@@ -18,11 +36,30 @@ export const addContactHandler: CustomHandler<true, { "username": string }> = as
 
     if (!contactUser) {
 
+        res.json({ "status": "Not Found", "message": "This username does not exist" });
         return;
 
     };
 
-    console.log("checking param:", username);
+    const isContact = await UserContactsUserFactory.findByUserIds(currentUser.id, contactUser.id).catch((err) => {
+
+        console.log(err);
+
+    });
+
+    if (isContact === undefined) {
+
+        res.json({ "status": "Internal Server Error" });
+        return;
+
+    };
+
+    if (isContact) {
+
+        res.json({ "status": "Exists", "message": "This user has already been added to your contact list" });
+        return;
+
+    };
 
     const postedContact = await UserContactsUserFactory.postOne({ "userId": currentUser.id, "contactId": contactUser.id, "name": username }).catch((err) => {
 
@@ -32,17 +69,16 @@ export const addContactHandler: CustomHandler<true, { "username": string }> = as
 
     if (!postedContact) {
 
+        res.json({ "status": "Internal Server Error" });
         return;
 
     };
 
-    res.json(postedContact);
+    res.json({ "status": "Created", "data": postedContact });
 
 };
 
 export const getContactListHandler: CustomHandler<true> = async (req, res, next) => {
-
-    console.log("getContactListHandler began working...");
 
     const currentUser = req.user as Express.User;
 

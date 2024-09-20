@@ -1,6 +1,6 @@
 import React from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { BaseQueryFn, FetchArgs, FetchBaseQueryError, FetchBaseQueryMeta, MutationDefinition, ResultTypeFrom } from "@reduxjs/toolkit/query";
+import { useLocation } from "react-router-dom";
+import { BaseQueryFn, FetchArgs, FetchBaseQueryError, FetchBaseQueryMeta, MutationDefinition } from "@reduxjs/toolkit/query";
 import { UseMutation } from "@reduxjs/toolkit/dist/query/react/buildHooks";
 import { IPOSTRecovery } from "../../Types/Temp/Recovery";
 
@@ -15,7 +15,6 @@ const RequestMutation = (props: IRequestMutationProps): JSX.Element => {
 
     const currentLocation = useLocation();
 
-    const [isSignedup, setSignupState] = React.useState<boolean>(false);
     const [currentEmail, setEmail] = React.useState<string>("");
     const [requestMutation, { data: requestedMutation, error: reqMutError }] = props.useRequestMutation();
     const [isRequest, setRequest] = React.useState<"Created" | "Exists" | "No User" | "Bad Request" | "Internal Server Error" | null>(null);
@@ -79,7 +78,6 @@ const RequestMutation = (props: IRequestMutationProps): JSX.Element => {
         };
 
         console.log("The user has been invited for registration");
-        setSignupState(true);
 
     }, [isRequest]);
 
@@ -97,13 +95,13 @@ const RequestMutation = (props: IRequestMutationProps): JSX.Element => {
 
     }, []);
 
-    return (<>
+    return (
         <form className={`${props.type === "recovery" ? "form-recovery" : ""} p-2`}>
             <div className="mb-3">
                 {/* isSignedup */}
                 <label htmlFor="mutation-request" className="form-label">Email</label>
-                <input type="email" className={`form-control ${(["Incorrect", "Bad Request", "Exists"]).includes(isRequest as string) ? "is-invalid" : ""}`} id="mutation-request" aria-describedby="mutation-request-feedback" value={currentEmail} onChange={onEmailChange} />
-                <div id="mutation-request-feedback" className="invalid-feedback">
+                <input type="email" className={`form-control ${(["Incorrect", "Bad Request", "Exists", "No User"]).includes(isRequest as string) ? "is-invalid" : isRequest === "Created" ? "is-valid" : ""}`} id="mutation-request" aria-describedby="mutation-request-feedback" value={currentEmail} onChange={onEmailChange} />
+                <div id="mutation-request-feedback" className={`${isRequest === "Created" ? "" : "in"}valid-feedback`}>
 
                     {(
 
@@ -153,10 +151,9 @@ const RequestMutation = (props: IRequestMutationProps): JSX.Element => {
                     ?
                     <></>
                     :
-                    <button className="btn btn-primary" onClick={requestFn}>REQUEST</button>
+                    <button type="button" className="btn btn-primary" onClick={requestFn}>REQUEST</button>
             }
         </form>
-    </>
     );
 
 };

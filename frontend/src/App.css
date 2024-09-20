@@ -1028,6 +1028,7 @@
 .search-input>button,
 .search-input>input {
 
+  border: 1px solid #ced4da;
   background-color: #F0F2F5;
 
 }

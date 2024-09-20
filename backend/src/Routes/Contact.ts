@@ -14,9 +14,9 @@ contactRouter.get("/", OnlyAuthorized, async (req, res, next) => {
 
 });
 
-contactRouter.post("/username/:username", OnlyAuthorized, express.text(), (req, res, next) => {
+contactRouter.post("/add", OnlyAuthorized, express.text(), (req, res, next) => {
 
-    const authorizedRequest = req as CustomRequest<true, { "username": IUser["username"] }>;
+    const authorizedRequest = req as CustomRequest<true, {}, string>;
 
     addContactHandler(authorizedRequest, res, next);
 

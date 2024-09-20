@@ -160,11 +160,7 @@ const ChatApp = (): JSX.Element => {
                     <CSortContext>
                         <div className="list-search position-relative">
 
-                            <div className="input-group search-input">
-
                                 <NavigationSearch />
-
-                            </div>
 
                         </div>
 

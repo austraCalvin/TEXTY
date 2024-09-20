@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import IContact, { IContactState, IPOSTEDContact } from "../Types/User/UserContactsUser";
+import IUser from "../Types/User/User";
 
 export const contactAPI = createApi({
     "reducerPath": "contactAPI",
@@ -12,13 +13,13 @@ export const contactAPI = createApi({
         "getInTouch": builder.query<IContactState, string>({
             "query": (contactId) => `/id/${contactId}`
         }),
-        "addContact": builder.mutation<IPOSTEDContact, { "user": IContact["name"] }>({
-            "query": (name) => ({ "url": `/username/${name.user}`, "method": "post" })
+        "addContact": builder.mutation<({ "status": "Exists" | "Bad Request" | "Not Found", "message": string, "data"?: undefined }) | { "status": "Created", "data": IPOSTEDContact, "message": undefined }, string>({
+            "query": (username) => ({ "url": `/add`, "method": "post", "body": username })
         }),
         "dropContact": builder.mutation<IPOSTEDContact, string>({
             "query": (id) => ({ "url": `/id/${id}`, "method": "delete" })
         }),
-        "editContact": builder.mutation<IPOSTEDContact, {"id": IContact["id"], "customname": IContact["name"]}>({
+        "editContact": builder.mutation<IPOSTEDContact, { "id": IContact["id"], "customname": IContact["name"] }>({
             "query": (data) => ({ "url": `/id/${data.id}`, "method": "patch", "body": data.customname })
         })
     })

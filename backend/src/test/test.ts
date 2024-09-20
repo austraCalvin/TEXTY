@@ -200,12 +200,12 @@
 //2 lowercase as minimum, 5 maximum
 //1 uppercase as minimum, 3 maximum
 
-fetch("http://localhost:27018/", { "headers": {"content-type": "application/json" }, "method": "GET" }).then(async(e) => {
+// fetch("http://localhost:27018/", { "headers": {"content-type": "application/json" }, "method": "GET" }).then(async(e) => {
 
-    console.log("response =", e.status);
+//     console.log("response =", e.status);
 
-}).catch((err) => {
+// }).catch((err) => {
 
-    console.log("errorcito:", err);
+//     console.log("errorcito:", err);
 
-});
+// });

@@ -1,5 +1,4 @@
 import React from "react";
-import AddContact from "../Chats/addContact";
 import ContactList from "../Chats/ChatList";
 import CreateGroup from "../Chats/createGroup";
 import { Dropdown } from "react-bootstrap";

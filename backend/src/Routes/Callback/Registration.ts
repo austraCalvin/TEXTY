@@ -182,8 +182,6 @@ export const validateRegistrationCodeCallback: CustomHandler<false, { "id": stri
 
 export const confirmRegistrationCallback: CustomHandler<false, { "id": string }, Omit<IPOSTUser, "email"> & { "code": number }> = async (req, res, next) => {
 
-    console.log("whatever:", req.body);
-
     const registrationPending = await RegistrationFactory.findById(req.params.id).catch((err) => {
 
         console.log(err);
@@ -224,17 +222,19 @@ export const confirmRegistrationCallback: CustomHandler<false, { "id": string },
 
             const fieldUsed = userExists.username ? "username" : userExists.email ? "email" : "";
 
-            res.json({ "status": "Bad Request", "message": `${fieldUsed} is already in use` });
+            res.json({ "status": "Bad Request", "error": { "field": fieldUsed, "message": `${fieldUsed} is already in use` } });
             // return done(`${errorOrigin} - ${fieldUsed} is already in use`, false);
 
-        } else if (userExists.username && userExists.email) {
-
-
-            res.json({ "status": "Bad Request", "message": `username and email are already in use` });
-            // return done(`${errorOrigin} - username and email are already in use`, false);
-
-
         };
+
+        // else if (userExists.username && userExists.email) {
+
+
+        //     res.json({ "status": "Bad Request", "error": {"field": "","message": `username and email are already in use`} });
+        //     // return done(`${errorOrigin} - username and email are already in use`, false);
+
+
+        // };
 
         return;
 

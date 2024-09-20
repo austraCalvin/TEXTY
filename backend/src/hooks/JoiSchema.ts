@@ -91,11 +91,16 @@ export const userJoiSchema = Joi.object<IPOSTUser, true>({
         "signup": (schema) => schema.required(),
         "login": (schema) => schema.required()
     }),
-    "password": Joi.string().regex(/^(?=(?:.*[a-z]){2})(?!.*[a-z]{4})(?=(?:.*[A-Z]){2})(?!.*[A-Z]{3})(?=(?:.*[0-9]){3})(?!.*[0-9]{4})(?=(?:.*[_.*\-]){1})(?!.*[_.*\-]{2})[a-zA-Z0-9_.*\-]{8,}$/).alter({
+    "password": Joi.string().regex(/^(?=(?:.*[0-9]){5})(?=(?:.*[a-z]){2})(?=(?:.*[A-Z]){1})(?=(?:.*[_.*\-]){1})[0-9a-zA-Z_.*\-]{9,}$/).alter({
         "signup": (schema) => schema.required(),
         "login": (schema) => schema.required()
     })
 });
+
+// "password": Joi.string().regex(/^(?=(?:.*[a-z]){2})(?!.*[a-z]{4})(?=(?:.*[A-Z]){2})(?!.*[A-Z]{3})(?=(?:.*[0-9]){3})(?!.*[0-9]{4})(?=(?:.*[_.*\-]){1})(?!.*[_.*\-]{2})[a-zA-Z0-9_.*\-]{8,}$/).alter({
+//     "signup": (schema) => schema.required(),
+//     "login": (schema) => schema.required()
+// })
 
 export const messageJoiSchema = Joi.object<IPOSTMessage, true>({
     "body": Joi.string().trim().min(1).when(Joi.ref("fileId"), { "then": Joi.optional(), "otherwise": Joi.required() }),

@@ -5,6 +5,7 @@ import { useLogInMutation } from "../../Services/Authentication";
 
 const Login = (): JSX.Element => {
 
+    const [currentStatus, setStatus] = React.useState<("Correct" | "Incorrect" | "Fail" | null)>(null);
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const dispatch = useAppDispatch();
@@ -13,28 +14,54 @@ const Login = (): JSX.Element => {
 
     React.useEffect(() => {
 
+        console.log("logInState:", logInState);
+
         if (!logInState || logInError) {
 
             return;
 
         };
 
-        if (logInState.state === "Fail") {
+        if (logInState === "Incorrect" || logInState === "Fail") {
 
             return;
 
         };
 
+        console.log(logInState, "has been set");
+        setStatus(logInState);
         dispatch(logIn());
 
     }, [logInState]);
+
+    React.useEffect(() => {
+
+        const currentError = logInError as { status: number, data: string } | undefined;
+        console.log("CurrentError:", currentError);
+
+        if (!currentError) {
+
+            return;
+
+        };
+
+        if (currentError.data === "Unauthorized") {
+
+            console.log("Incorrect has been set");
+            setStatus("Incorrect");
+
+        };
+
+
+    }, [logInError]);
+
 
     const loginFn = (username: string, password: string) => {
 
         const requestBody = { username, password };
 
         DBlogIn(requestBody);
-        
+
     };
 
     const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,18 +112,46 @@ const Login = (): JSX.Element => {
 
         <form className="p-2">
 
-            <div className="mb-3">
-                <label htmlFor="username-input" className="form-label">Username</label>
-                <input type="text" name="username" className="form-control" id="username-input"
-                    placeholder="Username" onChange={onUsernameChange} />
+            <div className={`mb-3 ${currentStatus ? (currentStatus === "Incorrect" ? "is-invalid" : "") : ""}`} aria-describedby="login-feedback">
+
+                <div className="mb-3">
+                    <label htmlFor="username-input" className="form-label">Username</label>
+                    <input type="text" name="username" className="form-control" id="username-input"
+                        placeholder="Username" onChange={onUsernameChange} />
+                </div>
+
+                <div className="mb-3">
+                    <label htmlFor="password-input" className="form-label">Password</label>
+                    <input type="password" name="password" className="form-control" id="password-input"
+                        placeholder="Password" onChange={onPasswordChange} />
+                </div>
+
             </div>
-            <div className="mb-3">
-                <label htmlFor="password-input" className="form-label">Password</label>
-                <input type="password" name="password" className="form-control" id="password-input"
-                    placeholder="Password" onChange={onPasswordChange} />
+
+            <div id="login-feedback" className="invalid-feedback mb-3">
+
+                {
+                    currentStatus ?
+                        (
+                            currentStatus === "Incorrect"
+                                ?
+                                <>The credentials are incorrect</>
+                                :
+                                currentStatus === "Fail"
+                                    ?
+                                    <>The backend failed to authenticate</>
+                                    :
+                                    <></>
+                        )
+                        :
+                        <></>
+
+                }
+
             </div>
 
             <button type="button" className="btn btn-primary" onClick={() => { loginFn(username, password) }}>Log in</button>
+
         </form>
     </>);
 

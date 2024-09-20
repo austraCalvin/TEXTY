@@ -5,7 +5,7 @@ const Chats = (): JSX.Element => {
 
     const { sort, isFocused, inputOnChange, inputOnFocus, inputOnBlur } = React.useContext(SortContext);
 
-    return (<>
+    return (<div className="input-group search-input">
 
         <button type="button" className="btn d-flex justify-content-center align-items-center"
             aria-label="Search">
@@ -20,22 +20,16 @@ const Chats = (): JSX.Element => {
 
         </button>
 
-        <input type="text" className="form-control border-0" aria-label="Search" placeholder="Search" onChange={inputOnChange} onFocus={inputOnFocus} onBlur={inputOnBlur} />
+        <input type="text" className="form-control" aria-label="Search" placeholder="Search" onChange={inputOnChange} onFocus={inputOnFocus} onBlur={inputOnBlur} />
 
-        {
-            sort
-                ?
-                <button type="button" className="btn d-flex justify-content-center align-items-center"
-                    aria-label="Close">
+        <button type="button" className="btn d-flex justify-content-center align-items-center"
+            aria-label="Close">
 
-                    <i className="fa-solid fa-xmark text-secondary"></i>
+            <i className="fa-solid fa-xmark text-secondary"></i>
 
-                </button>
-                :
-                <></>
-        }
+        </button>
 
-    </>);
+    </div>);
 
 };
 

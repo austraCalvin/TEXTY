@@ -178,16 +178,16 @@ app.post("/login", express.json(), passport.authenticate("login"), (req, res) =>
 
     if (req.isAuthenticated()) {
 
-        console.log("user has been logged in");
-        console.log("user:", req.user ? req.user : "none");
+        console.log("User has been logged in");
+        console.log("User:", req.user ? req.user : "none");
         req.session.userId = req.user.id;
 
-        res.status(200).json({ "state": "Authorized" });
+        res.status(200).send("Correct");
 
     } else {
 
-        console.log("user has NOT been logged in");
-        res.status(401).json({ "state": "Unauthorized" });
+        console.log("User has NOT been logged in");
+        res.status(401).send("Incorrect");
 
     };
 
