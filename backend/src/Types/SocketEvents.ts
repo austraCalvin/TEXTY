@@ -7,6 +7,7 @@ import IUserReceivesMessage, { IMessageToDeliver } from "./Message/UserReceivesM
 import IUserJoinsGroup, { IEDITUserJoinsGroup } from "./User/UserJoinsGroup";
 import DBDate from "./DBDate";
 import IUserContactsUser from "./User/UserContactsUser";
+import { IMessageRequest } from "./Message/Request";
 
 export type IContactOnline = {
 
@@ -51,6 +52,8 @@ export interface IClientToServerEvents {
 
     "send-data": (sendId: string, callback: (messageId: string) => void) => void;
 
+    "contact-data": (contactId: string, callback: (data: { "name": string, "description": string }) => void) => void;
+
     "message-content": (messageId: string, callback: (message: { "id": string, "body": string }) => void) => void;
 
     "sender-id": (sendId: string, callback: (userId: string) => void) => void;
@@ -68,7 +71,11 @@ export interface IServerToClientEvents {
     // "contact-online": (contactId: IUser["id"]) => void;
     // "contact-offline": (contactId: IUser["id"], lastOnline?: DBDate) => void;
 
-    "add-contact": (data: {"id": IUserContactsUser["id"], "user_name": IUser["name"], "user_username": IUser["username"]})=>void;
+    "add-contact": (data: { "id": IUserContactsUser["id"], "userId": string, "user_name": IUser["name"] }) => void;
+
+    "add-message-request": (data: { "id": IMessageRequest["id"], "userId"?: IMessageRequest["userId"], "contactId"?: IMessageRequest["contactId"], "messageId": IMessageRequest["messageId"] }) => void;
+
+    "drop-message-request": (id: string) => void;
 
     "add-group-member": (data: { "id": string, "name": string, "admin": boolean }) => void;
     "edit-group-member": (data: Pick<IEDITUserJoinsGroup, "id" | "admin">) => void;

@@ -1,19 +1,7 @@
 import { getManyModel } from "../../../Types/IDAOMethods";
-import IUser from "../../../Types/User/User";
-import IMessage from "../../../Types/Message/Message";
-import IUserSendsMessage from "../../../Types/Message/UserSendsMessage";
-import IUserReceivesMessage from "../../../Types/Message/UserReceivesMessage";
-import { IFileData } from "../../../Types/Message/File";
-import IUserJoinsGroup from "../../../Types/User/UserJoinsGroup";
-import IUserContactsUser from "../../../Types/User/UserContactsUser";
-import IGroup from "../../../Types/User/Group";
-import IUserConfiguration from "../../../Types/User/Configuration";
 import mongoose from "mongoose";
 import isObject from "../../../hooks/isObject";
-import { MongoDbEntity } from "../../../Types/DBEntities";
-import filterProps from "../../../hooks/filterProps";
-import IRegistration from "../../../Types/Temp/Registration";
-import IRecovery from "../../../Types/Temp/Recovery";
+import { EntityReturnTypeMany, EntityReturnTypeOne, MongoDbEntity } from "../../../Types/DBEntities";
 
 export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
@@ -75,13 +63,13 @@ export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
     };
 
-    async getMany(model: getManyModel<T>, limit: number): Promise<(T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : IRecovery[]) | null>;
+    async getMany(model: getManyModel<T>, limit: number): Promise<EntityReturnTypeMany<T> | null>;
 
-    async getMany(model: getManyModel<T>): Promise<(T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : IRecovery[]) | null>;
+    async getMany(model: getManyModel<T>): Promise<EntityReturnTypeMany<T> | null>;
 
-    async getMany(): Promise<(T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : IRecovery[]) | null>;
+    async getMany(): Promise<EntityReturnTypeMany<T> | null>;
 
-    async getMany(model?: getManyModel<T>, limit?: number): Promise<(T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : IRecovery[]) | null> {
+    async getMany(model?: getManyModel<T>, limit?: number): Promise<EntityReturnTypeMany<T> | null> {
 
         if (!this.online) {
 
@@ -148,7 +136,7 @@ export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
         };
 
-        return Promise.resolve(collection as (T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : IRecovery[]));
+        return Promise.resolve(collection as EntityReturnTypeMany<T>);
 
     };
 
@@ -160,7 +148,7 @@ export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
         };
 
-        const foundElement= await (this.collection.findOne(model).lean() as Promise<any>).catch((err) => { });
+        const foundElement = await (this.collection.findOne(model).lean() as Promise<any>).catch((err) => { });
 
         if (foundElement === undefined) {
 
@@ -174,7 +162,7 @@ export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
         };
 
-        return Promise.resolve(foundElement as T extends IUser ? IUser : T extends IGroup ? IGroup : T extends IUserContactsUser ? IUserContactsUser : T extends IUserJoinsGroup ? IUserJoinsGroup : T extends IUserConfiguration ? IUserConfiguration : T extends IMessage ? IMessage : T extends IFileData ? IFileData : T extends IUserSendsMessage ? IUserSendsMessage : T extends IUserReceivesMessage ? IUserReceivesMessage : T extends IRegistration ? IRegistration : IRecovery);
+        return Promise.resolve(foundElement as EntityReturnTypeOne<T>);
 
     };
 
@@ -200,7 +188,7 @@ export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
         };
 
-        return Promise.resolve(postedArray as (T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : IRecovery[]));
+        return Promise.resolve(postedArray as EntityReturnTypeMany<T>);
 
     };
 
@@ -226,7 +214,9 @@ export abstract class MongoDBEntityTemplate<T extends MongoDbEntity> {
 
         };
 
-        return Promise.resolve(postedArray[0] as (T extends IUser ? IUser : T extends IGroup ? IGroup : T extends IUserContactsUser ? IUserContactsUser : T extends IUserJoinsGroup ? IUserJoinsGroup : T extends IUserConfiguration ? IUserConfiguration : T extends IMessage ? IMessage : T extends IFileData ? IFileData : T extends IUserSendsMessage ? IUserSendsMessage : T extends IUserReceivesMessage ? IUserReceivesMessage : T extends IRegistration ? IRegistration : IRecovery));
+        console.log("postedArray:", postedArray);
+
+        return Promise.resolve(postedArray[0] as EntityReturnTypeOne<T>);
 
     };
 

@@ -11,7 +11,8 @@ import { useCheckAuthQuery } from "./Services/Authentication";
 import { clientSocket } from ".";
 import { add as addSendMessage, updateOne as editSendMessage } from "./Redux/Reducer/UserSendsMessage";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, FetchBaseQueryMeta, MutationDefinition, QueryDefinition } from "@reduxjs/toolkit/query";
-import { join as joinGroup, add as addMember } from "./Redux/Reducer/Chat";
+import { join as joinGroup, join as addContact, add as addMember } from "./Redux/Reducer/Chat";
+import { add as addMessageRequest, remove as removeMessageRequest } from "./Redux/Reducer/MessageRequest";
 import CancelRequest from "./Components/Temp/Cancel";
 import Validate from "./Components/Temp/Validate";
 import { useCancelQuery as useRegistrationCancelQuery, useValidateMutation as useRegistrationValidateMutation, useCheckQuery as useRegistrationCheckQuery } from "./Services/Registration";
@@ -22,6 +23,7 @@ import { IPOSTRecovery } from "./Types/Temp/Recovery";
 import NotificationResponse from "./Components/Chats/NotificationResponse";
 import CInstallPromoContext from "./Context/InstallPromo";
 import { logIn, selectIsAuthenticated } from "./Redux/Reducer/Authentication";
+import { ILocalMessageRequest } from "./Types/Message/Request";
 
 type IRecoveryRequestMutation = UseMutation<MutationDefinition<string | IPOSTRecovery, BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError, {}, FetchBaseQueryMeta>, never, { "status": "Created" | "Exists" | "No User" | "Bad Request" | "Internal Server Error" }, "recoveryAPI" | "registrationAPI">>;
 
@@ -178,6 +180,38 @@ const App = (): JSX.Element => {
         dispatch(editSendMessage({ "id": objectId, "changes": { "deliveredDate": status.deliveredDate } }));
 
       };
+
+    });
+
+    clientSocket.on("add-contact", (data) => {
+
+      dispatch(addContact({ "id": data.id, "chatId": data.userId, "name": data.user_name, "description": "random", "type": "contact" }));
+
+    });
+
+    clientSocket.on("add-message-request", (data) => {
+
+      console.log("add-message-request:", data);
+
+      dispatch(addMessageRequest(data));
+
+      // const parsedValue = ((data as any)["_doc"]) as ILocalMessageRequest;
+
+      // if ((data as any)["_doc"]) {
+
+      //   dispatch(addMessageRequest(parsedValue));
+
+      // } else {
+
+      //   dispatch(addMessageRequest(data));
+
+      // };
+
+    });
+
+    clientSocket.on("drop-message-request", (data) => {
+
+      dispatch(removeMessageRequest(data));
 
     });
 

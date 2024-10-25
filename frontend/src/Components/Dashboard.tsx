@@ -18,7 +18,7 @@ const Dashboard = (): JSX.Element => {
                         <i className="fa-solid fa-comment"></i>
                     </div>
                 </div>
-                <div role="button" className="btn-icon position-relative custom-tooltip">
+                <div role="button" className="btn-icon position-relative custom-tooltip" onClick={setDashboard("requests")}>
                     <span className="tooltip-text">Requests</span>
                     <div>
                         <i className="fa-solid fa-envelope"></i>

@@ -68,7 +68,7 @@ export const reducer = createSlice({
             return;
 
         },
-        "add": (state, action: PayloadAction<{ "id": string, "chatId": string, "name": string, "description": string, "admin": boolean }>) => {
+        "add": (state, action: PayloadAction<{ "id": string, "chatId": string, "name": string, "description": string, "admin"?: boolean }>) => {
 
             if (!state.ids.includes(action.payload.chatId)) {
 
@@ -194,7 +194,7 @@ export const selectContactById = (state: RootState, id: IContact["id"]) => {
 
     // };
 
-    return state.chat.entities[id] as IChat;
+    return (state.chat.entities[id] as IChat);
 
 };
 

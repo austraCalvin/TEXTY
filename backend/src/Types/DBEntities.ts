@@ -11,11 +11,16 @@ import IUserReceivesMessage from "./Message/UserReceivesMessage";
 import IUserConnection from "./User/UserConnection";
 import IRegistration from "./Temp/Registration";
 import IRecovery from "./Temp/Recovery";
+import { IMessageRequest } from "./Message/Request";
 
 // type MongoDbCollectionType<T> = mongoose.Document<unknown, {}, T> & T & { _id: mongoose.Types.ObjectId; }
 
 // export type MongoDbCollectionType<T> = mongoose.FlattenMaps<T> & { _id: mongoose.Types.ObjectId; }
 
-export type MongoDbEntity = IUser | IGroup | IUserContactsUser | IUserJoinsGroup | IUserConfiguration | IMessage | IFileData | IUserSendsMessage | IUserReceivesMessage | IRegistration | IRecovery;
+export type MongoDbEntity = IUser | IGroup | IUserContactsUser | IUserJoinsGroup | IUserConfiguration | IMessage | IFileData | IUserSendsMessage | IUserReceivesMessage | IRegistration | IRecovery | IMessageRequest;
 
-export type SessionEntity = IUser | IGroup | IUserContactsUser | IUserJoinsGroup | IUserConfiguration | IMessage | IFile | IFileData | IUserSendsMessage | IUserReceivesMessage | IRegistration | IRecovery | IUserConnection;
+export type SessionEntity = MongoDbEntity | IFile | IUserConnection;
+
+export type EntityReturnTypeOne<T> = T extends IUser ? IUser : T extends IGroup ? IGroup : T extends IUserContactsUser ? IUserContactsUser : T extends IUserJoinsGroup ? IUserJoinsGroup : T extends IUserConfiguration ? IUserConfiguration : T extends IMessage ? IMessage : T extends IFileData ? IFileData : T extends IUserSendsMessage ? IUserSendsMessage : T extends IUserReceivesMessage ? IUserReceivesMessage : T extends IRegistration ? IRegistration : T extends IRecovery ? IRecovery : IMessageRequest;
+
+export type EntityReturnTypeMany<T> = (T extends IUser ? IUser[] : T extends IGroup ? IGroup[] : T extends IUserContactsUser ? IUserContactsUser[] : T extends IUserJoinsGroup ? IUserJoinsGroup[] : T extends IUserConfiguration ? IUserConfiguration[] : T extends IMessage ? IMessage[] : T extends IFileData ? IFileData[] : T extends IUserSendsMessage ? IUserSendsMessage[] : T extends IUserReceivesMessage ? IUserReceivesMessage[] : T extends IRegistration ? IRegistration[] : T extends IRecovery ? IRecovery[] : IMessageRequest[]);

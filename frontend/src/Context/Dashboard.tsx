@@ -1,6 +1,6 @@
 import React, { createContext, useState } from "react";
 
-export type DashboardOptions = "none" | "chats" | "settings" | "notifications" | "newcontact";
+export type DashboardOptions = "none" | "chats" | "settings" | "notifications" | "newcontact" | "requests";
 
 // interface IDashboardContext {
 

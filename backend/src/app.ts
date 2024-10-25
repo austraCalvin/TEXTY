@@ -21,6 +21,7 @@ import { CustomRequest } from "./Types/Handler";
 import contactRouter from "./Routes/Contact";
 import groupRouter from "./Routes/Group";
 import notificationRouter from "./Routes/Notification";
+import messageRequestRouter from "./Routes/MessageRequest";
 // import { promisify } from 'util';
 
 // declare global {
@@ -118,6 +119,8 @@ app.use("/contact", contactRouter);
 app.use("/group", groupRouter);
 
 app.use("/notification", notificationRouter);
+
+app.use("/messagerequest", messageRequestRouter);
 
 app.post("/logout", (req, res) => {
 
@@ -218,7 +221,7 @@ const socketIOServer = new Server<IClientToServerEvents, IServerToClientEvents, 
         "origin": ["http://localhost:3000"],
         "methods": ["GET", "POST"],
         "credentials": true
-    }
+    },
 });
 
 socketIOServer.engine.use(customSession);

@@ -10,20 +10,24 @@ import { authenticationAPI } from "../../Services/Authentication";
 import { registrationAPI } from "../../Services/Registration";
 import { recoveryAPI } from "../../Services/Recovery";
 import { notificationAPI } from "../../Services/Notification";
+import { messageRequestAPI } from "../../Services/MessageRequest";
 import { reducer as authentication } from "../Reducer/Authentication";
+import { reducer as messageRequest } from "../Reducer/MessageRequest";
 
 const reducer = combineReducers({
     "chat": chat.reducer,
     "message": message.reducer,
     "userSendsMessage": userSendsMessage.reducer,
     "authentication": authentication.reducer,
+    "messageRequest": messageRequest.reducer,
     [authenticationAPI.reducerPath]: authenticationAPI.reducer,
     [groupAPI.reducerPath]: groupAPI.reducer,
     [contactAPI.reducerPath]: contactAPI.reducer,
     [userSendMessageAPI.reducerPath]: userSendMessageAPI.reducer,
     [registrationAPI.reducerPath]: registrationAPI.reducer,
     [recoveryAPI.reducerPath]: recoveryAPI.reducer,
-    [notificationAPI.reducerPath]: notificationAPI.reducer
+    [notificationAPI.reducerPath]: notificationAPI.reducer,
+    [messageRequestAPI.reducerPath]: messageRequestAPI.reducer
 });
 
 export const setUpStore = (preloadedState: PreloadedState<RootState>) => {
@@ -33,7 +37,7 @@ export const setUpStore = (preloadedState: PreloadedState<RootState>) => {
         preloadedState,
         middleware: (getDefaultMiddleware) => {
 
-            return getDefaultMiddleware().concat(authenticationAPI.middleware, groupAPI.middleware, contactAPI.middleware, userSendMessageAPI.middleware, registrationAPI.middleware, recoveryAPI.middleware, notificationAPI.middleware);
+            return getDefaultMiddleware().concat(authenticationAPI.middleware, groupAPI.middleware, contactAPI.middleware, userSendMessageAPI.middleware, registrationAPI.middleware, recoveryAPI.middleware, notificationAPI.middleware, messageRequestAPI.middleware);
 
         },
     })

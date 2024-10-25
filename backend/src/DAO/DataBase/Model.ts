@@ -12,10 +12,10 @@ import IUserConnection from "../../Types/User/UserConnection";
 import IUserContactsUser from "../../Types/User/UserContactsUser";
 import IUserJoinsGroup from "../../Types/User/UserJoinsGroup";
 import FileModel from "./MongoDB/Message/File";
-import MessageModel from "./MongoDB/Message/Message";
-import UserReceivesMessageModel from "./MongoDB/Message/UserReceivesMessage";
-import UserSendsMessageModel from "./MongoDB/Message/UserSendsMessage";
-import UserModel from "./MongoDB/User/User";
+import MessageMongoDB from "./MongoDB/Message/Message";
+import UserReceivesMessageMongoDB from "./MongoDB/Message/UserReceivesMessage";
+import UserSendsMessageMongoDB from "./MongoDB/Message/UserSendsMessage";
+import UserMongoDB from "./MongoDB/User/User";
 import UserConfigurationModel from "./Session/User/Configuration";
 import UserConnectionModel from "./Session/User/UserConnection";
 import FileMongoDB from "../DataBase/MongoDB/Message/File";
@@ -29,6 +29,8 @@ import RegistrationSession from "./MongoDB/Temp/Registration";
 import IRecovery from "../../Types/Temp/Recovery";
 import RecoveryMongoDB from "./MongoDB/Temp/Recovery";
 import RecoverySession from "./Session/Temp/Recovery";
+import { IMessageRequest } from "../../Types/Message/Request";
+import MessageRequestMongoDB from "./MongoDB/Message/Request";
 
 export const databaseChosen = "mongodb";
 
@@ -95,6 +97,7 @@ export class MongoDBModel {
     collection(name: "user-joins-group"): IDAOMethods<IUserJoinsGroup>;
     collection(name: "registrations"): IDAOMethods<IRegistration>;
     collection(name: "recoveries"): IDAOMethods<IRecovery>;
+    collection(name: "message-requests"): IDAOMethods<IMessageRequest>;
 
     collection(name: CollectionOptions): ServiceCollectionOptions {
 
@@ -107,19 +110,19 @@ export class MongoDBModel {
         switch (name) {
 
             case "users":
-                return new UserModel;
+                return new UserMongoDB;
 
             case "user-configuration":
                 return new ConfigurationMongoDB;
 
             case "messages":
-                return new MessageModel;
+                return new MessageMongoDB;
 
             case "user-sends-message":
-                return new UserSendsMessageModel;
+                return new UserSendsMessageMongoDB;
 
             case "user-receives-message":
-                return new UserReceivesMessageModel;
+                return new UserReceivesMessageMongoDB;
 
             case "files":
                 return new FileMongoDB;
@@ -138,6 +141,9 @@ export class MongoDBModel {
 
             case "recoveries":
                 return new RecoveryMongoDB;
+
+            case "message-requests":
+                return new MessageRequestMongoDB;
 
         };
 
@@ -162,6 +168,7 @@ export class SessionStorageModel {
     collection(name: "registrations"): IDAOMethods<IRegistration>;
     collection(name: "userConnections"): IDAOMethods<IUserConnection>;
     collection(name: "recoveries"): IDAOMethods<IRecovery>;
+    collection(name: "message-requests"): IDAOMethods<IMessageRequest>;
 
     collection(name: CollectionOptions | "files-content" | "userConnections"): ServiceCollectionOptions | IDAOMethods<IFile> | IDAOMethods<IUserConnection> {
 
@@ -174,19 +181,19 @@ export class SessionStorageModel {
         switch (name) {
 
             case "users":
-                return new UserModel;
+                return new UserMongoDB;
 
             case "user-configuration":
                 return new UserConfigurationModel;
 
             case "messages":
-                return new MessageModel;
+                return new MessageMongoDB;
 
             case "user-sends-message":
-                return new UserSendsMessageModel;
+                return new UserSendsMessageMongoDB;
 
             case "user-receives-message":
-                return new UserReceivesMessageModel;
+                return new UserReceivesMessageMongoDB;
 
             case "files":
                 return new FileMongoDB;
@@ -211,6 +218,9 @@ export class SessionStorageModel {
 
             case "recoveries":
                 return new RecoverySession;
+
+            case "message-requests":
+                return new MessageRequestMongoDB;
 
         };
 

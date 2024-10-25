@@ -51,11 +51,12 @@ const NewContact = (): JSX.Element => {
 
         if (postedContact.data.status === "Created") {
 
-            const currentAddedContact = postedContact.data.data as IContact;
+            const currentAddedContact = postedContact.data.data as IContact & {"chatId": string};
 
             setStatus(postedContact.data.status);
             setErrorMessage("");
-            dispatch(addContact({ ...currentAddedContact, "chatId": currentAddedContact.id }));
+            console.log("CONTACT RECENTLY ADDED:", { ...currentAddedContact, "type": "contact" });
+            dispatch(addContact({ ...currentAddedContact, "type": "contact" }));
             return;
 
         } else {

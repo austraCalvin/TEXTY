@@ -108,7 +108,7 @@ const Chat = (props: ContactProps): JSX.Element => {
         ?
         <div className={`catalog-li ${props.active ? "current" : ""}`} onClick={props.active ? () => { } : switchChat}>
             <div className="chat-avatar btn-icon">
-                <img className="d-block" src="./img/female_avatar.svg" alt="" width="49" height="49" />
+                <img className="d-block" src="./img/female_avatar.svg" alt="" width="50" height="50" />
             </div>
             <div className="li-info">
                 <div className="info-header">

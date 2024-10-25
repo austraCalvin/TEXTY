@@ -12,6 +12,8 @@ import MessageFactory from "./Message";
 import IUser from "../../../Types/User/User";
 import { getManyModel } from "../../../Types/IDAOMethods";
 import UserContactsUserFactory from "../User/UserContactsUser";
+import MessageRequestFactory from "./Request";
+import UserConnectionFactory from "../User/UserConnection";
 
 export class UserSendsMessageComposite {
 
@@ -171,7 +173,106 @@ export class UserSendsMessage implements IUserSentMessage {
 
             };
 
-            if (!isAllowed_st.messages || !isAllowed_nd.messages) {
+            if (!isAllowed_st.contact && !isAllowed_st.request && !isAllowed_nd.request && isAllowed_st.messages && isAllowed_nd.messages) {
+
+                const currentUser = await UserFactory.findById(this.userId).catch((err) => {
+
+                    console.log(err);
+
+                });
+
+                if (!currentUser) {
+
+                    return Promise.reject();
+
+                };
+                const contactUser = await UserFactory.findById(this.chatId).catch((err) => {
+
+                    console.log(err);
+
+                });
+
+                if (!contactUser) {
+
+                    return Promise.reject();
+
+                };
+
+                const isAllowed = await currentUser.isAllowed("contact", this.chatId).catch((err) => {
+
+                    console.log(err);
+
+                });
+
+                if (!isAllowed) {
+
+                    return Promise.reject();
+
+                };
+
+                if (!isAllowed.request && (isAllowed.approve === "both" || isAllowed.approve === "contact")) {
+
+                    const postedMessageRequest = await MessageRequestFactory.postOne({ "userId": this.userId, "contactId": this.chatId, "messageId": this.id }).catch((err) => {
+
+                        console.log(err);
+
+                    });
+
+                    if (postedMessageRequest === undefined) {
+
+                        return Promise.reject();
+
+                    };
+
+                    const currentUserConnection = await UserConnectionFactory.findById(this.userId).catch((err) => {
+
+                        console.log(err);
+
+                    });
+
+                    if (!currentUserConnection) {
+
+                        return Promise.reject();
+
+                    };
+
+                    console.log("cocacola:", Object.prototype.toString.call(postedMessageRequest));
+
+                    if (currentUserConnection) {
+
+                        if (currentUserConnection.online) {
+
+                            currentUserConnection.conn?.emit("add-message-request", { "id": postedMessageRequest.id, "messageId": postedMessageRequest.messageId, "contactId": postedMessageRequest.contactId });
+
+                        };
+
+                    };
+
+                    const contactUserConnection = await UserConnectionFactory.findById(this.chatId).catch((err) => {
+
+                        console.log(err);
+
+                    });
+
+                    if (contactUserConnection === undefined) {
+
+                        return Promise.reject();
+
+                    };
+
+                    if (contactUserConnection) {
+
+                        if (contactUserConnection.online) {
+
+                            contactUserConnection.conn?.emit("add-message-request", { "id": postedMessageRequest.id, "userId": postedMessageRequest.userId, "messageId": postedMessageRequest.messageId });
+
+                        };
+
+                    };
+
+                };
+
+            }else if (!isAllowed_st.messages || !isAllowed_nd.messages || isAllowed_st.request || isAllowed_nd.request) {
 
                 console.log("MESSAGES IS NOT ALLOWED");
                 return Promise.resolve(null);
@@ -279,7 +380,7 @@ export class UserSendsMessage implements IUserSentMessage {
                 return Promise.reject();
 
             };
-            
+
             const filteredUsersJoinGroup = usersJoinGroup.filter(async (value) => {
 
                 const receiverAllows = isAllowed[0][value.userId],

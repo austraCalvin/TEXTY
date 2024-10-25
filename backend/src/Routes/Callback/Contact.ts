@@ -61,7 +61,7 @@ export const addContactHandler: CustomHandler<true, {}, string> = async (req, re
 
     };
 
-    const postedContact = await UserContactsUserFactory.postOne({ "userId": currentUser.id, "contactId": contactUser.id, "name": username }).catch((err) => {
+    const postedContact = await UserContactsUserFactory.postOne({ "userId": currentUser.id, "contactId": contactUser.id, "name": contactUser.name }).catch((err) => {
 
         console.log(err);
 
@@ -74,7 +74,7 @@ export const addContactHandler: CustomHandler<true, {}, string> = async (req, re
 
     };
 
-    res.json({ "status": "Created", "data": postedContact });
+    res.json({ "status": "Created", "data": {...JSON.parse(JSON.stringify(postedContact)), "chatId": postedContact.contactId} });
 
 };
 
@@ -118,5 +118,31 @@ export const getContactListHandler: CustomHandler<true> = async (req, res, next)
         "name": val.name,
         "description": ""
     })));
+
+};
+
+export const getContactHandler: CustomHandler<true, {"id": string}> = async (req, res, next) => {
+
+    const contactUser = await UserFactory.findById(req.params.id).catch((err) => {
+
+        console.log(err);
+
+    });
+
+    if (contactUser === undefined) {
+
+        res.json({"status": "Internal Server Error"});
+        return;
+        
+    };
+
+    if (contactUser === null) {
+
+        res.json({"status": "Not Found"});
+        return;
+
+    };
+
+    res.json(contactUser)
 
 };

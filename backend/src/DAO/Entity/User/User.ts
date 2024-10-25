@@ -9,6 +9,7 @@ import IChat from "../../../Types/Chat";
 import UserContactsUserFactory from "./UserContactsUser";
 import UserJoinsGroupFactory from "./UserJoinsGroup";
 import GroupFactory from "./Group";
+import MessageRequestFactory from "../Message/Request";
 
 export class UserComposite {
 
@@ -265,15 +266,15 @@ export class User implements IUser {
 
     };
 
-    async isAllowed(chatType: "group", chatId: IChat["id"]): Promise<{ "blocked": boolean, "messages": boolean, "read": boolean }>
-    async isAllowed(chatType: "contact", chatId: IChat["id"]): Promise<{ "contact": boolean, "blocked": boolean, "messages": boolean, "read": boolean }>
+    async isAllowed(chatType: "group", chatId: IChat["id"]): Promise<{ "blocked": boolean, "messages": boolean, "read": boolean, "approve": "both" | "group" | "none" }>
+    async isAllowed(chatType: "contact", chatId: IChat["id"]): Promise<{ "request": boolean, "contact": boolean, "blocked": boolean, "messages": boolean, "read": boolean, "approve": "both" | "contact" | "none" }>
     async isAllowed(chatType: IChat["type"], chatId: IChat["id"]) {
 
         if (chatType === "contact") {
 
             const contactId = chatId;
 
-            const foundElement = await UserContactsUserFactory.findByUserIds(this.id, contactId).catch((err) => {
+            const foundElement = await UserContactsUserFactory.findByUserIds(contactId, this.id).catch((err) => {
 
                 console.log(err);
 
@@ -287,43 +288,62 @@ export class User implements IUser {
 
             if (foundElement === null) {
 
-                const userConfig = await UserFactory.getConfig(contactId).catch((err) => {
+                const messageRequest = await MessageRequestFactory.findByUserIds(this.id, contactId).catch((err) => {
 
                     console.log(err);
 
                 });
 
-                if (userConfig === undefined) {
+                if (messageRequest === undefined) {
 
                     return Promise.reject();
 
                 };
 
-                if (userConfig === null) {
+                const contactUserConfig = await UserFactory.getConfig(contactId).catch((err) => {
+
+                    console.log(err);
+
+                });
+
+                if (contactUserConfig === undefined) {
+
+                    return Promise.reject();
+
+                };
+
+                if (contactUserConfig === null) {
 
                     return {
+                        "request": !!messageRequest,
                         "contact": false,
                         "blocked": false,
-                        "messages": true,
-                        "read": true
+                        "messages": messageRequest ? false : true,
+                        "read": true,
+                        "approve": "both"
                     };
 
                 };
 
-                const configValue = userConfig.approve === "both" || userConfig.approve === "contact" ? false : true
+                const configValue = contactUserConfig.approve === "both" || contactUserConfig.approve === "contact" ? false : true
 
                 console.log({
+                    "request": !!messageRequest,
                     "contact": false,
                     "blocked": false,
-                    "messages": configValue,
-                    "read": userConfig.read
+                    "messages": true,
+                    "read": contactUserConfig.read,
+                    "approve": contactUserConfig.approve
                 });
 
                 return {
+                    "request": !!messageRequest,
                     "contact": false,
                     "blocked": false,
-                    "messages": configValue,
-                    "read": userConfig.read
+                    "messages": true,
+                    "read": contactUserConfig.read,
+                    "approve": contactUserConfig.approve
+
                 };
 
             };
@@ -331,17 +351,21 @@ export class User implements IUser {
             const configValue = !foundElement.blocked;
 
             console.log({
+                "request": false,
                 "contact": true,
                 "blocked": !configValue,
                 "messages": configValue,
-                "read": configValue ? foundElement.read : false
+                "read": configValue ? foundElement.read : false,
+                "approve": "none"
             });
 
             return {
+                "request": false,
                 "contact": true,
                 "blocked": !configValue,
                 "messages": configValue,
-                "read": configValue ? foundElement.read : false
+                "read": configValue ? foundElement.read : false,
+                "approve": "none"
             };
 
         } else if (chatType === "group") {
@@ -377,13 +401,15 @@ export class User implements IUser {
             console.log({
                 "blocked": !configValue,
                 "messages": configValue,
-                "read": configValue ? currentJoinsGroup.read : false
+                "read": configValue ? currentJoinsGroup.read : false,
+                "approve": "none"
             });
 
             return {
                 "blocked": !configValue,
                 "messages": configValue,
-                "read": configValue ? currentJoinsGroup.read : false
+                "read": configValue ? currentJoinsGroup.read : false,
+                "approve": "none"
             };
 
         };

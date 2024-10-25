@@ -670,7 +670,8 @@
 
 .catalog-li,
 .settings-li,
-.notifications-li {
+.notifications-li,
+.request-li {
 
   position: relative;
   display: flex;
@@ -682,6 +683,7 @@
   height: 72px;
 
 }
+
 
 .catalog-li .chat-avatar,
 .settings-li .settings-icon {
@@ -806,6 +808,7 @@
 }
 
 /* d-flex flex-column h-100 */
+
 .catalog-li>.chats-info {
 
   display: flex;
@@ -843,6 +846,14 @@
   flex-direction: column;
   height: 100%;
   justify-content: center;
+
+}
+
+.request-li>.li-info {
+
+  display: flex;
+  flex-direction: row;
+  height: 100%;
 
 }
 
@@ -926,7 +937,8 @@
 
 }
 
-.catalog-li>.li-info>.info-header>.li-title {
+.catalog-li>.li-info>.info-header>.li-title,
+.request-li>.li-info>.info-header>.li-title {
 
   align-self: center;
   font-size: 12px;
@@ -942,11 +954,26 @@
 }
 
 .catalog-li>.li-info>.info-header,
-.catalog-li>.li-info>.info-footer {
+.catalog-li>.li-info>.info-footer,
+.request-li>.li-info>.info-header,
+.request-li>.li-info>.info-footer {
 
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+}
+
+.request-li>.li-info>.info-header {
+
+  flex-grow: 1;
+  align-items: center;
+
+}
+
+.request-li>.li-info>.info-footer>.btn-group {
+
+  flex-grow: 1;
 
 }
 
@@ -1138,13 +1165,26 @@ input[type="checkbox"]:not(:checked) {
 
 }
 
-.navigation-response>div[class*="-li"]:active {
+.catalog-li:active,
+.notifications-li:active {
 
-  background-color: #CDE2F7;
+    background-color: #CDE2F7;
 
 }
 
-.navigation-response>div[class*="-li"].current{
+.request-li>.li-info>.info-footer>.btn-group>.btn-outline-success:active {
+
+    background-color: #198754af;
+
+}
+
+.request-li>.li-info>.info-footer>.btn-group>.btn-outline-danger:active {
+
+    background-color: #dc3546b7;
+
+}
+
+.navigation-response>div[class*="-li"].current {
 
   cursor: default;
 
@@ -1161,7 +1201,6 @@ input[type="checkbox"]:not(:checked) {
   background-color: white;
 
 }
-
 
 .form-login,
 .form-recovery {
@@ -1185,7 +1224,7 @@ input[type="checkbox"]:not(:checked) {
 
 }
 
-.form-label{
+.form-label {
 
   text-transform: capitalize;
 

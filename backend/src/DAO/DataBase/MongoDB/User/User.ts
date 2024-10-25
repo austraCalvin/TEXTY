@@ -2,7 +2,7 @@ import IUser from "../../../../Types/User/User";
 import mongoose from "mongoose";
 import { MongoDBEntityTemplate } from "../Model";
 
-class UserModel extends MongoDBEntityTemplate<IUser>  {
+class UserMongoDB extends MongoDBEntityTemplate<IUser>  {
 
     protected collection: mongoose.Model<IUser>;
     protected errorOrigin: string;
@@ -31,4 +31,4 @@ class UserModel extends MongoDBEntityTemplate<IUser>  {
 
 };
 
-export default UserModel;
+export default UserMongoDB;

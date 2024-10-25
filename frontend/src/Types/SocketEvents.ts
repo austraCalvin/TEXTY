@@ -6,6 +6,7 @@ import IReply from "./Message/Reply";
 import IUserReceivesMessage from "./Message/UserReceivesMessage";
 import IGroup from "./User/Group";
 import IUserJoinsGroup, { IEDITUserJoinsGroup } from "./User/UserJoinsGroup";
+import { IMessageRequest } from "./Message/Request";
 
 export type IContactOnline = {
 
@@ -82,6 +83,10 @@ export interface IClientToServerEvents {
 
     "send-data": (sendId: string, callback: (messageId: string) => void) => void;
 
+    "receive-data": (sendId: string, callback: (receive: IUserReceivesMessage) => void) => void;
+
+    "contact-data": (contactId: string, callback: (data: { "name": string, "description": string }) => void) => void;
+
     "message-content": (messageId: string, callback: (message: { "id": string, "body": string }) => void) => void;
 
     "sender-id": (sendId: string, callback: (userId: string) => void) => void;
@@ -89,19 +94,24 @@ export interface IClientToServerEvents {
 };
 
 export interface IServerToClientEvents {
-    
+
     "message-to-deliver": (deliver: IMessageToDeliver, callback: UserReceivedMessageCallback) => void;
     "message-to-read": (unread: IMessageToRead, callback: UserReadMessageCallback) => void;
     "message-status": MessageStatusCallback;
 
     "contact-online": (contactId: IUser["id"], state: IContactOnline) => void;
 
+    "add-contact": (data: { "id": string, "userId": string, "user_name": IUser["name"] }) => void;
+
+    "add-message-request": (data: { "id": IMessageRequest["id"], "userId"?: IMessageRequest["userId"], "contactId"?: IMessageRequest["contactId"], "messageId": IMessageRequest["messageId"] }) => void;
+
+    "drop-message-request": (id: string) => void;
 
     "add-group-member": (data: { "id": string, "name": string, "admin": boolean }) => void;
     "edit-group-member": (data: Pick<IEDITUserJoinsGroup, "id" | "username" | "admin">) => void;
     "drop-group-member": (memberId: IUserJoinsGroup["id"]) => void;
 
-    "join-group": (data: { "id": string, "name": string, "description"?: string, "admin": boolean}) => void;
+    "join-group": (data: { "id": string, "name": string, "description"?: string, "admin": boolean }) => void;
 
 };
 

@@ -3,9 +3,11 @@ import CDashboardContext, { DashboardContext } from "../Context/Dashboard";
 import Dashboard from "./Dashboard";
 import { useAppDispatch } from "../Redux/Hooks";
 import { setAll } from "../Redux/Reducer/Chat";
+import { init as setAllMessageRequests } from "../Redux/Reducer/MessageRequest";
 import { useGetAllQuery as useGetAllContactsQuery } from "../Services/Contact";
 import Chat from "./Chat";
 import { useGetAllQuery as useGetAllGroupsQuery } from "../Services/Group";
+import { useGetAllQuery as useGetAllMessageRequestsQuery } from "../Services/MessageRequest";
 import IChat from "../Types/Chat";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import NavigationResponse from "./Navigation/NavigationResponse";
@@ -22,8 +24,9 @@ const ChatApp = (): JSX.Element => {
 
     const [req, setReq] = React.useState<IReq>({ "isLoading": true, "success": false, "isError": false });
 
-    const { data: contactListData, error: contactListerror, refetch: refetchContactList } = useGetAllContactsQuery();
-    const { data: groupListData, error: groupListerror, refetch: refetchGroupList } = useGetAllGroupsQuery();
+    const { data: contactListData, error: contactListError, refetch: refetchContactList } = useGetAllContactsQuery();
+    const { data: groupListData, error: groupListError, refetch: refetchGroupList } = useGetAllGroupsQuery();
+    const { data: messageRequestListData, error: messageRequestListError, refetch: refetchMessageRequestList } = useGetAllMessageRequestsQuery();
 
     const dispatch = useAppDispatch();
 
@@ -42,9 +45,9 @@ const ChatApp = (): JSX.Element => {
 
         };
 
-        if (contactListerror || groupListerror) {
+        if (contactListError || groupListError) {
 
-            console.log(`${!contactListerror ? "CONTACT" : "GROUP"} FETCH FAILED`);
+            console.log(`${!contactListError ? "CONTACT" : "GROUP"} FETCH FAILED`);
             setReq({ ...req, "isLoading": false, "isError": true });
             return;
 
@@ -76,9 +79,9 @@ const ChatApp = (): JSX.Element => {
 
     React.useEffect(() => {
 
-        if (groupListerror) {
+        if (groupListError) {
 
-            const fetchError = groupListerror as FetchBaseQueryError;
+            const fetchError = groupListError as FetchBaseQueryError;
 
             console.log(`GROUP LIST FETCH ERROR - STATUS=${fetchError.status}`);
 
@@ -105,9 +108,9 @@ const ChatApp = (): JSX.Element => {
 
     React.useEffect(() => {
 
-        if (contactListerror) {
+        if (contactListError) {
 
-            const fetchError = contactListerror as FetchBaseQueryError;
+            const fetchError = contactListError as FetchBaseQueryError;
 
             console.log(`CONTACT LIST FETCH ERROR - STATUS=${fetchError.status}`);
 
@@ -130,7 +133,61 @@ const ChatApp = (): JSX.Element => {
 
         };
 
+        if (contactListData) {
+
+            console.log("CONTACT LIST DATA HAS BEEN REFETCH!");
+            refetchContactList();
+            return;
+
+        };
+
     }, [contactListData]);
+
+    React.useEffect(() => {
+
+        if (messageRequestListError) {
+
+            const fetchError = messageRequestListError as FetchBaseQueryError;
+
+            console.log(`MESSAGE REQUEST LIST FETCH ERROR - STATUS=${fetchError.status}`);
+
+            if (fetchError.status === "PARSING_ERROR") {
+
+                console.log("MESSAGE REQUEST LIST DATA HAS BEEN REFETCH AFTER PARSING ERROR!");
+                refetchMessageRequestList();
+
+            };
+
+            return;
+
+        };
+
+        if (!messageRequestListData) {
+
+            console.log("MESSAGE REQUEST LIST DATA HAS BEEN REFETCH!");
+            refetchMessageRequestList();
+            return;
+
+        };
+
+        if (messageRequestListData) {
+
+            console.log("MESSAGE REQUEST LIST DATA HAS BEEN SET!");
+            if (Array.isArray(messageRequestListData)) {
+
+                if (messageRequestListData.length) {
+
+                    dispatch(setAllMessageRequests(messageRequestListData));
+
+                };
+
+            };
+
+            return;
+
+        };
+
+    }, [messageRequestListData]);
 
     return (<div className="app d-flex flex-row h-100 w-100 position-absolute z-n1">
 
@@ -160,7 +217,7 @@ const ChatApp = (): JSX.Element => {
                     <CSortContext>
                         <div className="list-search position-relative">
 
-                                <NavigationSearch />
+                            <NavigationSearch />
 
                         </div>
 

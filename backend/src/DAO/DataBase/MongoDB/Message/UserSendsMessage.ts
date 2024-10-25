@@ -3,7 +3,7 @@ import type { Model } from "mongoose";
 import IUserSendsMessage from "../../../../Types/Message/UserSendsMessage";
 import { MongoDBEntityTemplate } from "../Model";
 
-class UserSendsMessageModel extends MongoDBEntityTemplate<IUserSendsMessage> {
+class UserSendsMessageMongoDB extends MongoDBEntityTemplate<IUserSendsMessage> {
 
     protected collection: Model<IUserSendsMessage>;
     protected errorOrigin: string;
@@ -76,4 +76,4 @@ class UserSendsMessageModel extends MongoDBEntityTemplate<IUserSendsMessage> {
 
 };
 
-export default UserSendsMessageModel;
+export default UserSendsMessageMongoDB;

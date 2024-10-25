@@ -10,6 +10,7 @@ import { IPOSTUserJoinsGroup } from "../Types/User/UserJoinsGroup";
 import IUserConfiguration, { IPOSTUserConfiguration } from "../Types/User/Configuration";
 import IRegistration, { IPOSTRegistration } from "../Types/Temp/Registration";
 import IRecovery from "../Types/Temp/Recovery";
+import { IMessageRequest } from "../Types/Message/Request";
 
 export const idJoiSchema = Joi.string();
 export const dateJoiSchema = Joi.date();
@@ -223,6 +224,21 @@ export const recoveryJoiSchema = Joi.object<IRecovery, true>({
     "code": Joi.number().integer().alter({
         "post": (schema) => schema.optional()
     }),
+});
+
+export const messageRequestJoiSchema = Joi.object<IMessageRequest, true>({
+    "id": idJoiSchema.alter({
+        "post": (schema) => schema.optional()
+    }),
+    "userId": idJoiSchema.alter({
+        "post": (schema) => schema.required()
+    }),
+    "messageId": idJoiSchema.alter({
+        "post": (schema) => schema.required()
+    }),
+    "contactId": idJoiSchema.alter({
+        "post": (schema) => schema.required()
+    })
 });
 
 

@@ -4,6 +4,7 @@ import NotificationLI from "./NotificationLI";
 import SettingsLI from "./SettingsLI";
 import { DashboardContext } from "../../Context/Dashboard";
 import NewContact from "./NewContact";
+import RequestList from "./RequestList";
 
 const NavigationResponse = (): JSX.Element => {
 
@@ -22,6 +23,10 @@ const NavigationResponse = (): JSX.Element => {
                 dashboard === "newcontact"
                 ?
                 <NewContact/>
+                :
+                dashboard === "requests"
+                ?
+                <RequestList/>
                     :
                     <ContactList />
         }

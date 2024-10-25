@@ -140,7 +140,7 @@ export const backupChatCallback: CustomHandler<true, { "chatId": string }> = asy
 
     };
 
-    const userSendsMessage = await UserSendsMessageFactory.find({ "userId": [currentUser.id], chatId: [UserHasContact ? UserHasContact.contactId : chatId] }).catch((err) => {
+    const userSendsMessage = await UserSendsMessageFactory.find({ "userId": [currentUser.id], "chatId": [UserHasContact ? UserHasContact.contactId : chatId] }).catch((err) => {
 
         console.log(err);
 

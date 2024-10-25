@@ -63,7 +63,7 @@ const NavigationHeader = (): JSX.Element => {
                     </div>
                 </header>
                 :
-                dashboard === "notifications"
+                dashboard === "requests"
                     ?
                     <header className="position-relative d-flex align-items-center">
                         <div role="button" className="navigate-up btn-icon position-relative custom-tooltip" onClick={setDashboard("none")}>
@@ -75,12 +75,12 @@ const NavigationHeader = (): JSX.Element => {
 
                         <div className="current-page-name flex-grow-1">
 
-                            <h1>Notifications</h1>
+                            <h1>Requests</h1>
 
                         </div>
                     </header>
                     :
-                    dashboard === "newcontact"
+                    dashboard === "notifications"
                         ?
                         <header className="position-relative d-flex align-items-center">
                             <div role="button" className="navigate-up btn-icon position-relative custom-tooltip" onClick={setDashboard("none")}>
@@ -92,57 +92,74 @@ const NavigationHeader = (): JSX.Element => {
 
                             <div className="current-page-name flex-grow-1">
 
-                                <h1>New contact</h1>
+                                <h1>Notifications</h1>
 
                             </div>
                         </header>
                         :
-                        <header className="position-relative d-flex align-items-center">
+                        dashboard === "newcontact"
+                            ?
+                            <header className="position-relative d-flex align-items-center">
+                                <div role="button" className="navigate-up btn-icon position-relative custom-tooltip" onClick={setDashboard("none")}>
+                                    <span className="tooltip-text">Navigate up</span>
+                                    <div>
+                                        <i className="fa-solid fa-arrow-left"></i>
+                                    </div>
+                                </div>
 
-                            {/* <div role="button" className="navigate-up btn-icon position-relative custom-tooltip" onClick={setDashboard("none")}>
+                                <div className="current-page-name flex-grow-1">
+
+                                    <h1>New contact</h1>
+
+                                </div>
+                            </header>
+                            :
+                            <header className="position-relative d-flex align-items-center">
+
+                                {/* <div role="button" className="navigate-up btn-icon position-relative custom-tooltip" onClick={setDashboard("none")}>
                                 <span className="tooltip-text">Navigate up</span>
                                 <div>
                                     <i className="fa-solid fa-arrow-left"></i>
                                 </div>
                             </div> */}
 
-                            <div className="current-page-name flex-grow-1">
+                                <div className="current-page-name flex-grow-1">
 
-                                <h1>Chats</h1>
+                                    <h1>Chats</h1>
 
-                            </div>
-
-                            <div className="chats-controllers d-flex flex-row btn-icon-flex">
-
-                                <div role="button" className="btn-icon position-relative custom-tooltip chats-new">
-                                    <span className="tooltip-text">New chat</span>
-                                    <div>
-                                        <i className="fa-solid fa-comment-medical"></i>
-                                    </div>
                                 </div>
 
-                                <div className="btn-group">
-                                    <div role="button" className="btn-icon position-relative custom-tooltip chats-menu"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span className="tooltip-text">Menu</span>
+                                <div className="chats-controllers d-flex flex-row btn-icon-flex">
+
+                                    <div role="button" className="btn-icon position-relative custom-tooltip chats-new">
+                                        <span className="tooltip-text">New chat</span>
                                         <div>
-                                            <i className="fa-solid fa-ellipsis-vertical"></i>
+                                            <i className="fa-solid fa-comment-medical"></i>
                                         </div>
                                     </div>
-                                    <ul className="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-                                        <li role="button" className="dropdown-item" onClick={setDashboard("newcontact")}>New contact</li>
-                                        <li role="button" className="dropdown-item" >New group</li>
-                                        <li role="button" className="dropdown-item" onClick={onLogOutClick} >Log out</li>
-                                        <li>
-                                            <hr className="dropdown-divider" />
-                                        </li>
-                                        <li role="button" className="dropdown-item" onClick={isUserChoice}>Get Texty for Desktop</li>
-                                    </ul>
+
+                                    <div className="btn-group">
+                                        <div role="button" className="btn-icon position-relative custom-tooltip chats-menu"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span className="tooltip-text">Menu</span>
+                                            <div>
+                                                <i className="fa-solid fa-ellipsis-vertical"></i>
+                                            </div>
+                                        </div>
+                                        <ul className="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+                                            <li role="button" className="dropdown-item" onClick={setDashboard("newcontact")}>New contact</li>
+                                            <li role="button" className="dropdown-item" >New group</li>
+                                            <li role="button" className="dropdown-item" onClick={onLogOutClick} >Log out</li>
+                                            <li>
+                                                <hr className="dropdown-divider" />
+                                            </li>
+                                            <li role="button" className="dropdown-item" onClick={isUserChoice}>Get Texty for Desktop</li>
+                                        </ul>
+                                    </div>
+
                                 </div>
 
-                            </div>
-
-                        </header>
+                            </header>
         }
 
     </>);

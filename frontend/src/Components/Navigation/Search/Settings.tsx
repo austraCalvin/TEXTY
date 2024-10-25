@@ -5,7 +5,7 @@ const Settings = (): JSX.Element => {
 
     const { sort, isFocused, inputOnChange, inputOnFocus, inputOnBlur } = React.useContext(SortContext);
 
-    return (<div className="input-group search-input has-validation">
+    return (<div className="input-group search-input">
         
         <button type="button" className="btn d-flex justify-content-center align-items-center"
             aria-label="Search">

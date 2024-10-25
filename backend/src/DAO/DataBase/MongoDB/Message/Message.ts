@@ -3,7 +3,7 @@ import type {  Model } from "mongoose";
 import IMessage from "../../../../Types/Message/Message";
 import { MongoDBEntityTemplate } from "../Model";
 
-class MessageModel extends MongoDBEntityTemplate<IMessage>  {
+class MessageMongoDB extends MongoDBEntityTemplate<IMessage>  {
 
     protected collection: Model<IMessage>;
     protected errorOrigin: string;
@@ -26,4 +26,4 @@ class MessageModel extends MongoDBEntityTemplate<IMessage>  {
 
 };
 
-export default MessageModel;
+export default MessageMongoDB;

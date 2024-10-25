@@ -19,6 +19,7 @@ import IUserContactsUser from "../../../Types/User/UserContactsUser";
 import GroupFactory from "./Group";
 import webpush, { PushSubscription } from "web-push";
 import transport from "../../../nodemailer";
+import MessageRequestFactory from "../Message/Request";
 
 EventEmitter.setMaxListeners(2000000000);
 
@@ -48,59 +49,6 @@ abstract class IUserOnline {
 
         };
 
-        if (userSends.chatType === "contact") {
-
-            const contactUser = await UserFactory.findById(userSends.chatId).catch((err) => {
-
-                console.log(err);
-
-            });
-
-            if (!contactUser) {
-
-                return Promise.reject();
-
-            };
-
-            const isAllowed = await currentUser.isAllowed("contact", userSends.chatId).catch((err) => {
-
-                console.log(err);
-
-            });
-
-            if (!isAllowed) {
-
-                return Promise.reject();
-
-            };
-
-            if (!isAllowed.contact) {
-
-                const postedContact = await UserContactsUserFactory.postOne({ "userId": this.id, "contactId": userSends.chatId, "verified": true }).catch((err) => {
-
-                    console.log(err);
-
-                });
-
-                if (!postedContact) {
-
-                    return Promise.reject();
-
-                };
-
-                if (this.connection) {
-
-                    this.connection.emit("add-contact", {
-                        "id": postedContact.id,
-                        "user_name": contactUser.name,
-                        "user_username": contactUser.username
-                    });
-
-                };
-
-            };
-
-        };
         //ensure contact exists before current user
         //is alerted that message was sent
 
@@ -140,6 +88,84 @@ abstract class IUserOnline {
 
         };
 
+        if (userSends.chatType === "contact") {
+
+            const contactUser = await UserFactory.findById(userSends.chatId).catch((err) => {
+
+                console.log(err);
+
+            });
+
+            if (!contactUser) {
+
+                return Promise.reject();
+
+            };
+
+            const isAllowed = await currentUser.isAllowed("contact", userSends.chatId).catch((err) => {
+
+                console.log(err);
+
+            });
+
+            if (!isAllowed) {
+
+                return Promise.reject();
+
+            };
+
+            if (isAllowed.request) {
+
+                return { "send": postedUserSendsMessage, "message": postedMessage };
+
+            };
+
+            // else if (!isAllowed.contact && !isAllowed.request && (isAllowed.approve === "both" || isAllowed.approve === "contact")) {
+
+            //     const postedMessageRequest = await MessageRequestFactory.postOne({ "userId": this.id, "contactId": userSends.chatId, "messageId": postedUserSendsMessage.id }).catch((err) => {
+
+            //         console.log(err);
+
+            //     });
+
+            //     if (postedMessageRequest === undefined) {
+
+            //         return Promise.reject();
+
+            //     };
+
+            //     if (this.connection) {
+
+            //         this.connection.emit("add-message-request", { "id": postedMessageRequest.id, "messageId": postedMessageRequest.messageId, "contactId": postedMessageRequest.contactId });
+
+            //     };
+
+            //     const contactUserConnection = await UserConnectionFactory.findById(userSends.chatId).catch((err) => {
+
+            //         console.log(err);
+
+            //     });
+
+            //     if (!contactUserConnection) {
+
+            //         return Promise.reject();
+
+            //     };
+
+            //     if (contactUserConnection) {
+
+            //         if (contactUserConnection.online) {
+
+            //             contactUserConnection.conn?.emit("add-message-request", { "id": postedMessageRequest.id, "userId": postedMessageRequest.userId, "messageId": postedMessageRequest.messageId });
+
+            //         };
+
+            //     };
+
+            // };
+
+        };
+
         return { "send": postedUserSendsMessage, "message": postedMessage };
 
     };
@@ -173,7 +199,6 @@ abstract class IUserOnline {
                 return Promise.reject();
 
             };
-
 
             if ((usersReceiveMessage === null) || !usersReceiveMessage.elements[0]) {
 
@@ -1030,7 +1055,7 @@ export class UserConnection implements IUserConnection {
 
         });
 
-        if (!isAllowed_st || isAllowed_st.blocked) {
+        if (!isAllowed_st || isAllowed_st.blocked || isAllowed_st.request) {
 
             return [null, undefined];
 
@@ -1395,6 +1420,27 @@ export class UserConnection implements IUserConnection {
 
         });
 
+        connection.on("contact-data", async (contactId, cb) => {
+
+            console.log("contact-data inspection");
+            console.log(contactId);
+
+            const contactData = await UserFactory.findById(contactId).catch((err) => {
+
+                console.log(err);
+
+            });
+
+            if (!contactData) {
+
+                return;
+
+            };
+
+            cb({ "name": contactData.name ? contactData.name : contactData.username, "description": "random" });
+
+        });
+
         //message to send by the current user
         connection.on("message-pending", async (userSends, message, callback) => {
 
@@ -1424,52 +1470,42 @@ export class UserConnection implements IUserConnection {
 
                 } else if (currentContactsContact === null) {
 
-                    const postedElement = await UserContactsUserFactory.postOne({ "userId": this.id, "contactId": userSends.chatId }).catch((err) => {
+                    const contactUser = await UserFactory.findById(userSends.chatId).catch((err) => {
 
                         console.log(err);
 
                     });
 
-                    if (postedElement === undefined) {
+                    if (!contactUser) {
 
                         return;
 
                     };
 
-                    contactId = postedElement.contactId;
+                    const postedContact = await UserContactsUserFactory.postOne({ "userId": this.id, "contactId": userSends.chatId, "name": contactUser.name ? contactUser.name : contactUser.username }).catch((err) => {
+
+                        console.log(err);
+
+                    });
+
+                    if (postedContact === undefined) {
+
+                        return;
+
+                    };
+
+                    this.conn?.emit("add-contact", {
+                        "id": postedContact.id,
+                        "userId": contactUser.id,
+                        "user_name": postedContact.name,
+                    });
+
+                    contactId = postedContact.contactId;
 
                 } else {
 
                     chatId = userSends.chatId;
                     contactId = userSends.chatId;
-
-                };
-
-                const foundElement = await UserContactsUserFactory.findByUserIds(contactId, this.id).catch((err) => {
-
-                    console.log(err);
-
-                });
-
-                if (foundElement === undefined) {
-
-                    return;
-
-                };
-
-                if (foundElement === null) {
-
-                    const postedElement = await UserContactsUserFactory.postOne({ "userId": contactId, "contactId": this.id, "verified": false }).catch((err) => {
-
-                        console.log(err);
-
-                    });
-
-                    if (postedElement === undefined) {
-
-                        return;
-
-                    };
 
                 };
 
@@ -2049,8 +2085,9 @@ export class UserConnection implements IUserConnection {
 
                     (this.connection as UserWebSocket).emit("add-contact", {
                         "id": postedContact.id,
-                        "user_name": contactUser.name,
-                        "user_username": contactUser.username
+                        "userId": contactUser.id
+                        ,
+                        "user_name": contactUser.name ? contactUser.username : contactUser.name
                     });
 
                 };

@@ -23,7 +23,9 @@ const ContactList = (): JSX.Element => {
 
                 const currentChat = contactListRaw[contactId] as IChat;
 
-                const currentChatId = currentChat.type === "contact" ? (currentChat.userId as string) : currentChat.id;
+                // const currentChatId = currentChat.type === "contact" ? (currentChat.userId as string) : currentChat.id;
+
+                const currentChatId = currentChat.type === "contact" ? (contactId as string) : currentChat.id;
 
                 const switchChat = (e: React.MouseEvent<HTMLDivElement>) => {
 

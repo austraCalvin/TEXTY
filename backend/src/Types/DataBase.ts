@@ -12,9 +12,10 @@ import IUser from "./User/User";
 import IUserContactsUser from "./User/UserContactsUser";
 import IUserJoinsGroup from "./User/UserJoinsGroup";
 import IRecovery from "./Temp/Recovery";
+import { IMessageRequest } from "./Message/Request";
 
 export type DataBaseOptions = "session-storage" | "mongodb";
-export type CollectionOptions = "users" | "user-configuration" | "messages" | "files" | "user-sends-message" | "user-receives-message" | "groups" | "user-contacts-user" | "user-joins-group" | "registrations" | "recoveries";
+export type CollectionOptions = "users" | "user-configuration" | "messages" | "files" | "user-sends-message" | "user-receives-message" | "groups" | "user-contacts-user" | "user-joins-group" | "registrations" | "recoveries" | "message-requests";
 
 export interface IDataBase {
 
@@ -36,11 +37,12 @@ export interface ICollection {
     (name: "user-configuration"): IDAOMethods<IUserConfiguration>;
     (name: "registrations"): IDAOMethods<IRegistration>;
     (name: "recoveries"): IDAOMethods<IRecovery>;
+    (name: "message-requests"): IDAOMethods<IMessageRequest>;
     // (name: CollectionOptions): ServiceCollectionOptions;
 };
 
 export type ServiceDataBaseOptions = SessionStorageModel | MongoDBModel;
-export type ServiceCollectionOptions = IDAOMethods<IUser> | IDAOMethods<IUserConfiguration> | IDAOMethods<IMessage> | IDAOMethods<IUserSendsMessage> | IDAOMethods<IUserReceivesMessage> | IDAOMethods<IFileData> | IDAOMethods<IGroup> | IDAOMethods<IUserContactsUser> | IDAOMethods<IUserJoinsGroup> | IDAOMethods<IRegistration> | IDAOMethods<IRecovery>;
+export type ServiceCollectionOptions = IDAOMethods<IUser> | IDAOMethods<IUserConfiguration> | IDAOMethods<IMessage> | IDAOMethods<IUserSendsMessage> | IDAOMethods<IUserReceivesMessage> | IDAOMethods<IFileData> | IDAOMethods<IGroup> | IDAOMethods<IUserContactsUser> | IDAOMethods<IUserJoinsGroup> | IDAOMethods<IRegistration> | IDAOMethods<IRecovery> | IDAOMethods<IMessageRequest>;
 
 // export class ModelFactoryType {
 

@@ -3,7 +3,7 @@ import type {  Model } from "mongoose";
 import IUserReceivesMessage from "../../../../Types/Message/UserReceivesMessage";
 import { MongoDBEntityTemplate } from "../Model";
 
-class UserReceivesMessageModel extends MongoDBEntityTemplate<IUserReceivesMessage>  {
+class UserReceivesMessageMongoDB extends MongoDBEntityTemplate<IUserReceivesMessage>  {
 
     protected collection: Model<IUserReceivesMessage>;
     protected errorOrigin: string;
@@ -34,4 +34,4 @@ class UserReceivesMessageModel extends MongoDBEntityTemplate<IUserReceivesMessag
 
 };
 
-export default UserReceivesMessageModel;
+export default UserReceivesMessageMongoDB;
