@@ -10,7 +10,7 @@ class MessageRequestMongoDB extends MongoDBEntityTemplate<IMessageRequest>  {
 
     constructor() {
 
-        super()
+        super();
 
         const messageRequestSchema = new mongoose.Schema<IMessageRequest>({
             "id": { type: String, required: true },

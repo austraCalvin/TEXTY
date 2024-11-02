@@ -1,3 +1,4 @@
+import { SortContext } from "../../Context/SearchInput";
 import { useAppSelector, useAppDispatch } from "../../Redux/Hooks";
 import { selectAllMessageRequestIds, selectAllMessageRequests } from "../../Redux/Reducer/MessageRequest";
 import { IMessageRequest } from "../../Types/Message/Request";
@@ -11,8 +12,6 @@ const RequestList = (): JSX.Element => {
     console.log(`contact list current length: ${requestListIds}`);
     const requestList: IMessageRequest[] = Object.values(requestListRaw) as IMessageRequest[];
 
-    console.log("Veronica -", requestList);
-
     return (<>
         {
             requestListIds.filter((requestId, index) => {
@@ -25,7 +24,7 @@ const RequestList = (): JSX.Element => {
 
                     return true;
 
-                }else if(!currentRequest.userId){
+                } else if (!currentRequest.userId) {
 
                     return false;
 

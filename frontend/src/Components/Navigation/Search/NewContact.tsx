@@ -81,7 +81,7 @@ const NewContact = (): JSX.Element => {
                     ?
                     <div className="spinner-border d-block"></div>
                     :
-                    "Send Request"
+                    "Add"
             }
 
         </button>

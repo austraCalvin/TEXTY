@@ -393,15 +393,15 @@
 .chats-controllers .custom-tooltip .tooltip-text {
 
   bottom: -120%;
-  left: 68%;
+  left: 57%;
   margin-left: -62px;
 
 }
 
 .chats-controllers .custom-tooltip .tooltip-text::after {
 
-  top: -29%;
-  left: 50px;
+  top: -28%;
+  left: 55px;
   margin-left: 0px;
   border-color: transparent transparent #555 transparent;
 
@@ -1042,7 +1042,7 @@
 
 .list-search {
 
-  padding: 14px 12px 7px;
+  padding: 14px 18px 7px;
 
 }
 
@@ -1119,8 +1119,11 @@
 
 .navigate-up.btn-icon {
 
+  display: flex;
+  align-items: center;
+  justify-content: start;
   padding: 0px;
-  margin-right: 14px;
+  margin-right: 6px;
 
 }
 
@@ -1132,16 +1135,16 @@
 
 .navigate-up.custom-tooltip .tooltip-text {
 
-  bottom: -124%;
-  left: 120%;
+  bottom: -110%;
+  left: 110%;
   margin-left: -62px;
 
 }
 
 .navigate-up.custom-tooltip .tooltip-text::after {
 
-  top: -29%;
-  left: 30px;
+  top: -28%;
+  left: 28px;
   margin-left: 0px;
   border-color: transparent transparent #555 transparent;
 
@@ -1168,19 +1171,19 @@ input[type="checkbox"]:not(:checked) {
 .catalog-li:active,
 .notifications-li:active {
 
-    background-color: #CDE2F7;
+  background-color: #CDE2F7;
 
 }
 
 .request-li>.li-info>.info-footer>.btn-group>.btn-outline-success:active {
 
-    background-color: #198754af;
+  background-color: #198754af;
 
 }
 
 .request-li>.li-info>.info-footer>.btn-group>.btn-outline-danger:active {
 
-    background-color: #dc3546b7;
+  background-color: #dc3546b7;
 
 }
 
@@ -1262,5 +1265,13 @@ input[type="checkbox"]:not(:checked) {
   left: 10px;
   width: fit-content;
   user-select: none;
+
+}
+
+.search-input>input:focus {
+
+  background-color: #F0F2F5;
+  box-shadow: none;
+  border: 1px solid #ced4da;
 
 }

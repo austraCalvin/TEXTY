@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { checkRegistrationCallback, requestRegistrationCallback, validateRegistrationCodeCallback, confirmRegistrationCallback, cancelRegistrationCallback } from "./Callback/Registration"
+import { checkRegistrationCallback, requestRegistrationCallback, validateRegistrationCodeCallback, confirmRegistrationCallback, cancelRegistrationCallback, checkRegistrationUsernameCallback } from "./Callback/Registration"
 import { IPOSTUser } from "../Types/User/User";
 import { CustomRequest } from "../Types/Handler";
 
@@ -42,6 +42,14 @@ registrationRouter.get("/cancel/:id", (req, res, next) => {
     const unAuthorizedRequest = req as CustomRequest<false, { "id": string }>;
 
     cancelRegistrationCallback(unAuthorizedRequest, res, next);
+
+});
+
+registrationRouter.post("/username/:username", express.text(), (req, res, next) => {
+
+    const unAuthorizedRequest = req as CustomRequest<false, {}, string>;
+
+    checkRegistrationUsernameCallback(unAuthorizedRequest, res, next);
 
 });
 

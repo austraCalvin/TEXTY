@@ -15,6 +15,7 @@ import NavigationHeader from "./Navigation/NavigationHeader";
 import { InstallPromoContext } from "../Context/InstallPromo";
 import NavigationSearch from "./Navigation/NavigationSearch";
 import CSortContext from "../Context/SearchInput";
+import CLogOutContext from "../Context/Logout";
 
 type IReq = { "isLoading": boolean, "success": boolean, "isError": boolean };
 
@@ -197,38 +198,42 @@ const ChatApp = (): JSX.Element => {
 
             <div className="d-flex flex-column position-relative navigation-block">
 
-                < NavigationHeader />
+                <CLogOutContext>
 
-                <div className="navigation-body">
+                    < NavigationHeader />
 
-                    <div role="button"
-                        className="install-promo w-100 border border-0 border-top d-flex flex-row justify-content-center align-items-center" onClick={isUserChoice}>
+                    <div className="navigation-body">
 
-                        <div className="promo-logo">
-                            <img className="d-block" src="./img/react_logo.ico" alt="" width="50" height="50" />
+                        <div role="button"
+                            className="install-promo w-100 border border-0 border-top d-flex flex-row justify-content-center align-items-center" onClick={isUserChoice}>
+
+                            <div className="promo-logo">
+                                <img className="d-block" src="./img/react_logo.ico" alt="" width="50" height="50" />
+                            </div>
+
+                            <div className="promo-text ms-2">
+                                Get Texty for Desktop
+                            </div>
+
                         </div>
 
-                        <div className="promo-text ms-2">
-                            Get Texty for Desktop
-                        </div>
+                        <CSortContext>
+                            <div className="list-search position-relative">
+
+                                <NavigationSearch />
+
+                            </div>
+
+                            <div className="navigation-response flex-grow-1">
+
+                                <NavigationResponse />
+
+                            </div>
+                        </CSortContext>
 
                     </div>
 
-                    <CSortContext>
-                        <div className="list-search position-relative">
-
-                            <NavigationSearch />
-
-                        </div>
-
-                        <div className="navigation-response flex-grow-1">
-
-                            <NavigationResponse />
-
-                        </div>
-                    </CSortContext>
-
-                </div>
+                </CLogOutContext>
 
             </div>
 

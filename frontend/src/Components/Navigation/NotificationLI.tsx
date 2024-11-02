@@ -3,6 +3,7 @@ import ContactList from "../Chats/ChatList";
 import CreateGroup from "../Chats/createGroup";
 import { Dropdown } from "react-bootstrap";
 import { useIsEnabledQuery, useSwitchNotifyMutation, useEnableMutation } from "../../Services/Notification";
+import { SortContext } from "../../Context/SearchInput";
 
 type EnabledType = {
     notify: boolean;
@@ -32,6 +33,8 @@ const NotificationLI = (): JSX.Element => {
         [switchNotify, { data: switchSuccess, error: switchError, isLoading: isSwitchNotifyLoading }] = useSwitchNotifyMutation(),
 
         [enableNotification, { data: isEnable, error: enableError, isLoading: isEnableLoading }] = useEnableMutation();
+
+    const { sort } = React.useContext(SortContext);
 
     React.useEffect(() => {
 
@@ -309,6 +312,23 @@ const NotificationLI = (): JSX.Element => {
 
     }, [isEnabled, isEnableLoading, isEnabledError, isSwitchNotifyLoading]);
 
+    let sortedCollection: INotificationLi[] = [];
+
+    if (sort) {
+
+        sortedCollection = notificationData.filter((e) => {
+
+            return e.title.includes(sort);
+
+        }).sort((a, b) => {
+
+            return a.title.localeCompare(b.title);
+
+        });
+
+    };
+
+
     return (<>
         {
             !isEnabledLoading
@@ -316,35 +336,39 @@ const NotificationLI = (): JSX.Element => {
                 <>
 
                     {
+                        (sort
+                            ?
+                            (sortedCollection)
+                            :
+                            notificationData
+                        ).map((e, index) => {
 
-                        notificationData.map((e, index) => {
-
-                            return (<div key={`notificationLi-${index}`} ref={e.ref} className="notifications-li" onClick={e.onClickFn}>
-                                <label role="button" className="li-info" htmlFor={`flexCheckChecked${index}`}>
-                                    <div className="info-header">
-                                        <div className="li-title">
-                                            <p>{e.title}</p>
+                                return (<div key={`notificationLi-${index}`} ref={e.ref} className="notifications-li" onClick={e.onClickFn}>
+                                    <label role="button" className="li-info" htmlFor={`flexCheckChecked${index}`}>
+                                        <div className="info-header">
+                                            <div className="li-title">
+                                                <p>{e.title}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="info-footer">
-                                        <div className="li-description">
-                                            <p>{e.description}</p>
+                                        <div className="info-footer">
+                                            <div className="li-description">
+                                                <p>{e.description}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
+                                    </label>
 
-                                {
-                                    e.isLoading
-                                        ?
-                                        <div className="loading spinner-border"></div>
-                                        :
-                                        <input role="button" className="form-check-input border-0"
-                                            type="checkbox" value="" id={`flexCheckChecked${index}`} checked={e.isChecked} onChange={() => { }} />
-                                }
+                                    {
+                                        e.isLoading
+                                            ?
+                                            <div className="loading spinner-border"></div>
+                                            :
+                                            <input role="button" className="form-check-input border-0"
+                                                type="checkbox" value="" id={`flexCheckChecked${index}`} checked={e.isChecked} onChange={() => { }} />
+                                    }
 
-                            </div>);
+                                </div>);
 
-                        })
+                            })
 
                     }
 

@@ -111,7 +111,6 @@ const Validate = (props: IRequestMutationProps): JSX.Element => {
                 ?
                 <>
                     {/* <header>texty</header> */}
-                    <main>
 
                         {
                             isReg === "Authorized"
@@ -164,7 +163,6 @@ const Validate = (props: IRequestMutationProps): JSX.Element => {
                                     <div style={{ "width": "10rem", "height": "10rem" }} className={`spinner-border text-success d-block mx-auto`} role="status"></div>
                         }
 
-                    </main>
                 </>
                 :
                 <Navigate to={"/"} />

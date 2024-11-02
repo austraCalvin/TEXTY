@@ -3,12 +3,12 @@ import { SortContext } from "../../../Context/SearchInput";
 
 const Settings = (): JSX.Element => {
 
-    const { sort, isFocused, inputOnChange, inputOnFocus, inputOnBlur } = React.useContext(SortContext);
+    const { inputRef, sort, isFocused, inputOnChange, inputOnFocus, inputOnBlur, inputOnBack, inputOnClose } = React.useContext(SortContext);
 
     return (<div className="input-group search-input">
         
         <button type="button" className="btn d-flex justify-content-center align-items-center"
-            aria-label="Search">
+            aria-label="Search" onClick={inputOnBack}>
 
             {
                 isFocused
@@ -20,13 +20,13 @@ const Settings = (): JSX.Element => {
 
         </button>
 
-        <input type="text" className="form-control border-0" aria-label="Search" placeholder="Search" onChange={inputOnChange} onFocus={inputOnFocus} onBlur={inputOnBlur} />
+        <input ref={inputRef} type="text" className="form-control" aria-label="Search" placeholder="Search" value={sort} onChange={inputOnChange} onFocus={inputOnFocus} onBlur={inputOnBlur} />
 
         {
             sort
                 ?
                 <button type="button" className="btn d-flex justify-content-center align-items-center"
-                    aria-label="Close">
+                    aria-label="Close" onClick={inputOnClose}>
 
                     <i className="fa-solid fa-xmark text-secondary"></i>
 

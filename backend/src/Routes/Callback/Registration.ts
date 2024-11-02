@@ -5,6 +5,57 @@ import { CustomHandler } from "../../Types/Handler";
 import { IPOSTUser } from "../../Types/User/User";
 import transport from "../../nodemailer";
 
+export const checkRegistrationUsernameCallback: CustomHandler<false, {}, string> = async (req, res, next) => {
+
+    const isValid = Joi.string().validate(req.body);
+
+    if (isValid.error) {
+
+        console.log(`Error from checkRegistrationCallback - joi validation: ${isValid.error.details[0].message}`);
+        console.log("username field:", req.body);
+
+        res.json({ "status": "Bad Request" });
+        return;
+
+    };
+
+    const userExists = await UserFactory.findByUsername(req.body).catch((err) => {
+
+        console.log(err);
+
+    });
+
+    if (userExists === undefined) {
+
+        //status = 500
+        res.json({ "status": "Internal Server Error" });
+        return;
+
+    };
+
+    console.log("userExists:", userExists);
+
+    await (new Promise<void>((success, danger) => {
+
+        setTimeout(() => {
+
+            success();
+
+        }, 3000);
+
+    }));
+
+    if (userExists) {
+
+        res.json({ "status": "Bad Request", "message": "username is already in use" });
+        return;
+
+    };
+
+    res.json({ "status": "OK" });
+
+};
+
 export const requestRegistrationCallback: CustomHandler<false, {}, string> = async (req, res, next) => {
 
     const isValid = Joi.string().email().validate(req.body);
