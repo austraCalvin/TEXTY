@@ -35,19 +35,19 @@ abstract class IUserOnline {
 
     async send2Db(userSends: IPOSTUserSendingMessage, message: IMessagePending) {
 
-        //ensure contact exists before current user
-        //is alerted that message was sent
-        const currentUser = await UserFactory.findById(this.id).catch((err) => {
+        // //ensure contact exists before current user
+        // //is alerted that message was sent
+        // const currentUser = await UserFactory.findById(this.id).catch((err) => {
 
-            console.log(err);
+        //     console.log(err);
 
-        });
+        // });
 
-        if (!currentUser) {
+        // if (!currentUser) {
 
-            return Promise.reject();
+        //     return Promise.reject();
 
-        };
+        // };
 
         //ensure contact exists before current user
         //is alerted that message was sent
@@ -85,84 +85,6 @@ abstract class IUserOnline {
         if (!postedUserSendsMessage) {
 
             return Promise.reject();
-
-        };
-
-        if (userSends.chatType === "contact") {
-
-            const contactUser = await UserFactory.findById(userSends.chatId).catch((err) => {
-
-                console.log(err);
-
-            });
-
-            if (!contactUser) {
-
-                return Promise.reject();
-
-            };
-
-            const isAllowed = await currentUser.isAllowed("contact", userSends.chatId).catch((err) => {
-
-                console.log(err);
-
-            });
-
-            if (!isAllowed) {
-
-                return Promise.reject();
-
-            };
-
-            if (isAllowed.request) {
-
-                return { "send": postedUserSendsMessage, "message": postedMessage };
-
-            };
-
-            // else if (!isAllowed.contact && !isAllowed.request && (isAllowed.approve === "both" || isAllowed.approve === "contact")) {
-
-            //     const postedMessageRequest = await MessageRequestFactory.postOne({ "userId": this.id, "contactId": userSends.chatId, "messageId": postedUserSendsMessage.id }).catch((err) => {
-
-            //         console.log(err);
-
-            //     });
-
-            //     if (postedMessageRequest === undefined) {
-
-            //         return Promise.reject();
-
-            //     };
-
-            //     if (this.connection) {
-
-            //         this.connection.emit("add-message-request", { "id": postedMessageRequest.id, "messageId": postedMessageRequest.messageId, "contactId": postedMessageRequest.contactId });
-
-            //     };
-
-            //     const contactUserConnection = await UserConnectionFactory.findById(userSends.chatId).catch((err) => {
-
-            //         console.log(err);
-
-            //     });
-
-            //     if (!contactUserConnection) {
-
-            //         return Promise.reject();
-
-            //     };
-
-            //     if (contactUserConnection) {
-
-            //         if (contactUserConnection.online) {
-
-            //             contactUserConnection.conn?.emit("add-message-request", { "id": postedMessageRequest.id, "userId": postedMessageRequest.userId, "messageId": postedMessageRequest.messageId });
-
-            //         };
-
-            //     };
-
-            // };
 
         };
 
@@ -544,7 +466,7 @@ export class UserOnline extends IUserOnline {
     async receive(userReceivesMessage: UserReceivesMessage, message: IMessage): Promise<ReceiveSuccess> {
 
         console.log(`UserOnline class at receive - message-to-deliver - Receive`);
-        console.log(`obj id: ${this.id}`);
+        console.log(`obj id: ${userReceivesMessage.id}`);
         console.log(`user id: ${userReceivesMessage.userId}`);
         console.log(`chat id: ${userReceivesMessage.chatId}`);
         console.log(`user connection is ${this.connection ? (this.connection.connected ? "online" : "offline") : "offline"}`);
@@ -1456,60 +1378,7 @@ export class UserConnection implements IUserConnection {
 
             if (userSends.chatType === "contact") {
 
-                const currentContactsContact = await UserContactsUserFactory.findByUserIds(this.id, userSends.chatId).catch((err) => {
-
-                    console.log(err);
-
-                });
-
-                let contactId: string;
-
-                if (currentContactsContact === undefined) {
-
-                    return;
-
-                } else if (currentContactsContact === null) {
-
-                    const contactUser = await UserFactory.findById(userSends.chatId).catch((err) => {
-
-                        console.log(err);
-
-                    });
-
-                    if (!contactUser) {
-
-                        return;
-
-                    };
-
-                    const postedContact = await UserContactsUserFactory.postOne({ "userId": this.id, "contactId": userSends.chatId, "name": contactUser.name ? contactUser.name : contactUser.username }).catch((err) => {
-
-                        console.log(err);
-
-                    });
-
-                    if (postedContact === undefined) {
-
-                        return;
-
-                    };
-
-                    this.conn?.emit("add-contact", {
-                        "id": postedContact.id,
-                        "userId": contactUser.id,
-                        "user_name": postedContact.name,
-                    });
-
-                    contactId = postedContact.contactId;
-
-                } else {
-
-                    chatId = userSends.chatId;
-                    contactId = userSends.chatId;
-
-                };
-
-                chatId = contactId;
+                chatId = userSends.chatId;
 
             } else {
 
@@ -1543,7 +1412,7 @@ export class UserConnection implements IUserConnection {
 
             console.log(`MESSAGE PENDING - chatId=${chatId}`);
 
-            this.send({ ...userSends, chatId }, message).then((userSentMessage) => {
+            this.send({ ...userSends, chatId }, message).then(async (userSentMessage) => {
 
                 // "id": IUserSendsMessage["id"];
                 // "userId": IUser["id"]
@@ -1551,6 +1420,58 @@ export class UserConnection implements IUserConnection {
                 // "date": IUserSendsMessage["date"];
                 // "chatType": IChat["type"];
                 // "chatId": IChat["id"];
+
+                // contact create
+
+                if (userSends.chatType === "contact") {
+
+                    const currentContactsContact = await UserContactsUserFactory.findByUserIds(this.id, userSends.chatId).catch((err) => {
+
+                        console.log(err);
+
+                    });
+                    
+                    if (currentContactsContact === undefined) {
+
+                        return;
+
+                    } else if (currentContactsContact === null) {
+
+                        const contactUser = await UserFactory.findById(userSends.chatId).catch((err) => {
+
+                            console.log(err);
+
+                        });
+
+                        if (!contactUser) {
+
+                            return;
+
+                        };
+
+                        const postedContact = await UserContactsUserFactory.postOne({ "userId": this.id, "contactId": userSends.chatId, "name": contactUser.name ? contactUser.name : contactUser.username }).catch((err) => {
+
+                            console.log(err);
+
+                        });
+
+                        if (postedContact === undefined) {
+
+                            return;
+
+                        };
+
+                        this.conn?.emit("add-contact", {
+                            "id": postedContact.id,
+                            "userId": contactUser.id,
+                            "user_name": postedContact.name,
+                        });
+
+                    };
+
+                };
+
+                //
 
                 callback({ ...userSentMessage, "chatId": userSends.chatId });
 

@@ -46,7 +46,11 @@ const MessageHistory = (props: IMessageHistoryProps): JSX.Element => {
 
             console.log("BACKUP CHAT - value:", data);
 
-            dispatch(setMany(data));
+            if (data.length) {
+
+                dispatch(setMany(data));
+
+            };
 
         };
 

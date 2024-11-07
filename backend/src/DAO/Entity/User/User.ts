@@ -325,17 +325,6 @@ export class User implements IUser {
 
                 };
 
-                const configValue = contactUserConfig.approve === "both" || contactUserConfig.approve === "contact" ? false : true
-
-                console.log({
-                    "request": !!messageRequest,
-                    "contact": false,
-                    "blocked": false,
-                    "messages": true,
-                    "read": contactUserConfig.read,
-                    "approve": contactUserConfig.approve
-                });
-
                 return {
                     "request": !!messageRequest,
                     "contact": false,
@@ -349,15 +338,6 @@ export class User implements IUser {
             };
 
             const configValue = !foundElement.blocked;
-
-            console.log({
-                "request": false,
-                "contact": true,
-                "blocked": !configValue,
-                "messages": configValue,
-                "read": configValue ? foundElement.read : false,
-                "approve": "none"
-            });
 
             return {
                 "request": false,

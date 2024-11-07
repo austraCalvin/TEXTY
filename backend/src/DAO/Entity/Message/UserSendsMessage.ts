@@ -173,44 +173,24 @@ export class UserSendsMessage implements IUserSentMessage {
 
             };
 
-            if (!isAllowed_st.contact && !isAllowed_st.request && !isAllowed_nd.request && isAllowed_st.messages && isAllowed_nd.messages) {
+            //The receiver does not have you as a contact
+            //The receiver allows you to send messages
+            //There's a request message
+            if (!isAllowed_st.contact && isAllowed_st.messages && !isAllowed_st.request && !isAllowed_nd.request && isAllowed_nd.messages) {
 
-                const currentUser = await UserFactory.findById(this.userId).catch((err) => {
-
-                    console.log(err);
-
-                });
-
-                if (!currentUser) {
-
-                    return Promise.reject();
-
-                };
-                const contactUser = await UserFactory.findById(this.chatId).catch((err) => {
+                const contactUserConnection = await UserConnectionFactory.findById(this.chatId).catch((err) => {
 
                     console.log(err);
 
                 });
 
-                if (!contactUser) {
+                if (contactUserConnection === undefined) {
 
                     return Promise.reject();
 
                 };
 
-                const isAllowed = await currentUser.isAllowed("contact", this.chatId).catch((err) => {
-
-                    console.log(err);
-
-                });
-
-                if (!isAllowed) {
-
-                    return Promise.reject();
-
-                };
-
-                if (!isAllowed.request && (isAllowed.approve === "both" || isAllowed.approve === "contact")) {
+                if (isAllowed_st.approve === "both" || isAllowed_st.approve === "contact") {
 
                     const postedMessageRequest = await MessageRequestFactory.postOne({ "userId": this.userId, "contactId": this.chatId, "messageId": this.id }).catch((err) => {
 
@@ -236,8 +216,6 @@ export class UserSendsMessage implements IUserSentMessage {
 
                     };
 
-                    console.log("cocacola:", Object.prototype.toString.call(postedMessageRequest));
-
                     if (currentUserConnection) {
 
                         if (currentUserConnection.online) {
@@ -245,18 +223,6 @@ export class UserSendsMessage implements IUserSentMessage {
                             currentUserConnection.conn?.emit("add-message-request", { "id": postedMessageRequest.id, "messageId": postedMessageRequest.messageId, "contactId": postedMessageRequest.contactId });
 
                         };
-
-                    };
-
-                    const contactUserConnection = await UserConnectionFactory.findById(this.chatId).catch((err) => {
-
-                        console.log(err);
-
-                    });
-
-                    if (contactUserConnection === undefined) {
-
-                        return Promise.reject();
 
                     };
 
@@ -270,9 +236,33 @@ export class UserSendsMessage implements IUserSentMessage {
 
                     };
 
+                } else {
+
+                    const postedContact = await UserContactsUserFactory.postOne({ "userId": this.chatId, "contactId": this.userId, "name": currentUser.name ? currentUser.name : currentUser.username }).catch((err) => {
+
+                        console.log(err);
+
+                    });
+
+                    if (postedContact === undefined) {
+
+                        return Promise.reject();
+
+                    };
+
+                    if (contactUserConnection) {
+
+                        contactUserConnection.conn?.emit("add-contact", {
+                            "id": postedContact.id,
+                            "userId": postedContact.contactId,
+                            "user_name": postedContact.name,
+                        });
+
+                    };
+
                 };
 
-            }else if (!isAllowed_st.messages || !isAllowed_nd.messages || isAllowed_st.request || isAllowed_nd.request) {
+            } else if (!isAllowed_st.messages || !isAllowed_nd.messages || isAllowed_st.request || isAllowed_nd.request) {
 
                 console.log("MESSAGES IS NOT ALLOWED");
                 return Promise.resolve(null);

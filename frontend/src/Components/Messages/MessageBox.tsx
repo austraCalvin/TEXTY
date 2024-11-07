@@ -172,14 +172,15 @@ const MessageBox = (props: IMessageBoxProps): JSX.Element => {
 
                 //SEND MESSAGE
 
+                clientSocket.emit("message-content", props.messageId as string, (messageContent) => {
+
+                    console.log(`SEND MESSAGE --- success`);
+                    success({ "exist": false, "data": { ...messageContent } });
+    
+                });    
+
             };
 
-            clientSocket.emit("message-content", props.messageId as string, (messageContent) => {
-
-                console.log(`SEND MESSAGE --- success`);
-                success({ "exist": false, "data": { ...messageContent } });
-
-            });
 
         });
 
