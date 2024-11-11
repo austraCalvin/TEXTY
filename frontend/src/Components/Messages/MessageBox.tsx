@@ -31,11 +31,11 @@ import { selectCurrentChatMember } from "../../Redux/Reducer/Chat";
 // };
 
 type GetMessageResponseType = {
-    "exist": true,
+    "saved": true,
     "data": { "id": string, "body": string }
 } |
 {
-    "exist": false,
+    "saved": false,
     "data": { "id": string, "body": string }
 };
 
@@ -55,29 +55,11 @@ const MessageBox = (props: IMessageBoxProps): JSX.Element => {
     const chat = useAppSelector(store => selectContactById(store, props.chatId));
     const bodyElement = React.useRef<HTMLSpanElement>(null);
 
-    let sendMessageId: string = "null";
+    const [messageId, setMessageId] = React.useState<string>("");
 
-    if (!props.sendId) {
+    console.log(`MESSAGE BOX - id to look for - ${messageId}`);
 
-        if (/[a-z][0-9][\-]/.test(props.id)) {
-
-            sendMessageId = props.messageId as string;
-
-        } else {
-
-            sendMessageId = props.date;
-
-        };
-
-    } else {
-
-        sendMessageId = props.messageId as string;
-
-    };
-
-    console.log(`MESSAGE BOX - id to look for - ${sendMessageId}`);
-
-    const currentMessage = useAppSelector(store => selectMessageById(store, sendMessageId));
+    const currentMessage = useAppSelector(store => selectMessageById(store, messageId));
 
     const parsedDate = new Date(props.date);
 
@@ -86,6 +68,7 @@ const MessageBox = (props: IMessageBoxProps): JSX.Element => {
         "minutes": parsedDate.getMinutes(),
         "seconds": parsedDate.getSeconds()
     };
+
     const sentDateFormat = (`${sentDate.hours}:${sentDate.minutes < 10 ? `0${sentDate.minutes}` : sentDate.minutes}`),
 
         [message, setMessage] = React.useState<Pick<IMessage, "id" | "body">>(),
@@ -137,66 +120,78 @@ const MessageBox = (props: IMessageBoxProps): JSX.Element => {
 
     React.useEffect(() => {
 
-        const localPromise: Promise<GetMessageResponseType> = new Promise((success, danger) => {
+        if (props.sendId) {
 
-            console.log("STORED-MESSAGE:", currentMessage ? "true" : "false");
+            if (props.messageId) {
 
-            if (currentMessage) {
-
-                return success({ "exist": true, "data": currentMessage });
-
-            };
-
-            if (props.sendId) {
-
-                //RECEIVE MESSAGE
-
-                if (!props.messageId) {
-
-                    clientSocket.emit("send-data", props.sendId, (messageId) => {
-
-                        dispatch(updateOne({ "id": props.id, "changes": { messageId } }));
-
-                        clientSocket.emit("message-content", messageId, (messageContent) => {
-
-                            console.log(`RECEIVE MESSAGE --- success`);
-                            success({ "exist": false, "data": { ...messageContent } });
-
-                        });
-
-                    });
-
-                };
+                setMessageId(props.messageId);
 
             } else {
 
-                //SEND MESSAGE
+                clientSocket.emit("send-data", props.sendId, (data) => {
 
-                clientSocket.emit("message-content", props.messageId as string, (messageContent) => {
-
-                    console.log(`SEND MESSAGE --- success`);
-                    success({ "exist": false, "data": { ...messageContent } });
+                    dispatch(updateOne({ "id": props.id, "changes": { "messageId": data } }));
+                    setMessageId(data)
     
-                });    
+                });
 
             };
 
+        } else {
+
+            if (/^\d+$/.test(props.id)) {
+
+                setMessageId(props.date);
+
+            } else {
+
+                setMessageId(props.messageId as string);
+
+            };
+
+        };
+
+    }, []);
+
+    React.useEffect(() => {
+
+        if (message) {
+
+            return;
+
+        };
+
+        const localPromise: Promise<GetMessageResponseType> = new Promise((success, danger) => {
+
+            console.log("The message is saved:", currentMessage ? "true" : "false");
+
+            if (currentMessage) {
+
+                success({ "saved": true, "data": currentMessage });
+
+            } else {
+
+                clientSocket.emit("message-content", messageId, (messageContent) => {
+
+                    success({ "saved": false, "data": { ...messageContent } });
+
+                });
+
+            };
 
         });
 
         localPromise.then((success) => {
 
-            if (!success.exist) {
+            if (!success.saved) {
 
                 console.log("MESSAGE BODY SET TO THE LOCAL DB");
                 dispatch(addMessage(success.data));
                 setMessage({ ...success.data });
 
-
             };
 
             console.log("MESSAGE BODY SET TO THE STATE");
-
             setMessage({ ...success.data });
 
         }).catch((err) => {
@@ -205,7 +200,7 @@ const MessageBox = (props: IMessageBoxProps): JSX.Element => {
 
         });
 
-    }, []);
+    }, [currentMessage, messageId]);
 
     React.useEffect(() => {
 
